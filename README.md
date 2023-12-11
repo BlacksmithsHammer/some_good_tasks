@@ -1,5 +1,6 @@
 # some_good_tasks
 
+median filter in task_4 -> main.cpp
 
 g++ was used for compilation. To pass the window size as a parameter, provide an integer (without - or --) when calling the executable. Input and output are handled using < and > (standard stdin and stdout) in Linux for convenience.
 
