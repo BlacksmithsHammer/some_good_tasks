@@ -10,3 +10,5 @@ number 3 in example - size of window
 
 To run the tests, download the repository and execute the run_tests.sh script in the task_4 folder. If the test is successful, it will output 'yes'; otherwise, it will output 'no'.
 
+# FPGA tasks
+in every subfolder in fpga-tasks unique README
