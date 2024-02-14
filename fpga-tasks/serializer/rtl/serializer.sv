@@ -17,7 +17,7 @@ module serializer (
   logic [15:0] data;
   logic        flag;
 
-  assign flag = data_val_i && ~busy && ( data_mod_i > 2 || data_mod_i == 0);
+  assign flag = data_val_i && ~busy && ( data_mod_i > 2 || data_mod_i == 0 );
 
   always_ff @( posedge clk_i )
     if( srst_i )
@@ -26,7 +26,7 @@ module serializer (
       if( flag )
         busy <= 1'b1;
       else
-        if (cnt < 2)
+        if( cnt < 2 )
           busy <= 1'b0;
       
   always_ff @( posedge clk_i )
