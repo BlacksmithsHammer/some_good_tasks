@@ -29,8 +29,15 @@ default clocking cb
   @( posedge clk );
 endclocking
 
+task throw_err(string msg);
+  $display(msg, $time);
+  $stop();
+endtask
+
 task send_and_compare( logic [15:0] test_data,
-                       logic [3:0]  test_data_mod);
+                       logic [4:0]  test_data_mod,
+                       int          test_counter   = 0,
+                       int          test_index     = 15);
   //begin input test data in correct format
   data     <= test_data;
   data_mod <= test_data_mod;
@@ -38,42 +45,36 @@ task send_and_compare( logic [15:0] test_data,
   ##1;
   data_val <= 1'b0;
   //end input
-  if (test_data_mod - 1 > 1)
+  
+  if( test_data_mod == 0 )
+    test_data_mod = 16;
+
+  if( test_data_mod > 2 )
     begin
-
-      logic [3:0]  test_cnt;
-
-      test_cnt = 4'd15;
-      while (ser_data_val && busy && test_cnt > 0)
+      while( test_counter < test_data_mod )
         begin
-          if (ser_data != test_data[test_cnt])
+          if( ( ( test_data_mod - test_counter ) > 1 ) && ~busy )
+            throw_err("Busy is incorrect: expected 1 in time:");
+
+          if( ( ( test_data_mod - test_counter ) == 1 ) && busy )
+            throw_err("Busy is incorrect: expected 0 in time:");
+
+          if( ser_data_val )
             begin
-              $display("test fallen, wrong bit in time: ", $time);
-              $stop();
+              if( ser_data != test_data[test_index] )
+                throw_err("Error: wrong ser_data in time:");
+              test_counter++;
+              test_index--;
             end
-          test_cnt = test_cnt - 1;
+          else
+            throw_err("Error: wrong ser_data_val expected 1 in time:");
+            
           ##1;
         end
-
-      if (ser_data_val && ser_data != test_data[test_cnt])
-          begin
-            $display("test fallen, wrong bit in time: ", $time);
-            $stop();
-          end
-      if (~test_cnt + 4'b0001 != test_data_mod)
-          begin
-            $display("test fallen, difference between lengths of serialized and test data in time:", $time);
-            $stop();
-          end
     end
   else
-    if (ser_data_val)
-      begin
-        $display("the data is sent at a time when it is not allowed in time: ", $time);
-        $stop();
-      end
-
-
+    if( ser_data_val || busy )
+      throw_err("The module should not transmit or do anything in time:");
 endtask
 
 initial
@@ -84,7 +85,8 @@ initial
     ##1;
     //continuous data_sending
     send_and_compare(16'b0110110011110001, 4'd5);
-    send_and_compare(16'b1000110000010001, 4'd10);
+    send_and_compare(16'b1000110000010001, 4'd15);
+    send_and_compare(16'b1001101000101111, 4'd0);
     send_and_compare(16'b1010110010101001, 4'd3);
     send_and_compare(16'b1010010110010100, 4'd0);
     send_and_compare(16'b0110110011110001, 4'd1);
@@ -97,12 +99,12 @@ initial
     send_and_compare(16'b1010010110010100, 4'd6);
     
     //sending with random pauses
-    for (int i = 0; i < 100; i = i + 1)
+    for (int i = 0; i < 1000; i = i + 1)
       begin
         ##($urandom_range(0, 5));
         send_and_compare($urandom_range(2**16-1, 0), $urandom_range(2**4-1, 0));
       end;
-
+    
     $display("The tests were passed successfully");
     $stop();
   end
