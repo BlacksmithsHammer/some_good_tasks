@@ -38,6 +38,7 @@ task send_and_compare( logic [15:0] test_data,
                        logic [4:0]  test_data_mod,
                        int          test_counter   = 0,
                        int          test_index     = 15);
+  int rem;
   //begin input test data in correct format
   data     <= test_data;
   data_mod <= test_data_mod;
@@ -53,10 +54,12 @@ task send_and_compare( logic [15:0] test_data,
     begin
       while( test_counter < test_data_mod )
         begin
-          if( ( ( test_data_mod - test_counter ) > 1 ) && ~busy )
+          rem = test_data_mod - test_counter;
+
+          if( ( rem > 1 ) && ~busy )
             throw_err("Busy is incorrect: expected 1 in time:");
 
-          if( ( ( test_data_mod - test_counter ) == 1 ) && busy )
+          if( ( rem == 1 ) && busy )
             throw_err("Busy is incorrect: expected 0 in time:");
 
           if( ser_data_val )
@@ -99,7 +102,7 @@ initial
     send_and_compare(16'b1010010110010100, 4'd6);
     
     //sending with random pauses
-    for (int i = 0; i < 1000; i = i + 1)
+    for (int i = 0; i < 10000; i = i + 1)
       begin
         ##($urandom_range(0, 5));
         send_and_compare($urandom_range(2**16-1, 0), $urandom_range(2**4-1, 0));

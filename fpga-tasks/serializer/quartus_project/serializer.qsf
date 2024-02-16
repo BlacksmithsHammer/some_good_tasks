@@ -18,7 +18,7 @@
 #
 # Quartus Prime
 # Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
-# Date created = 19:24:07  February 09, 2024
+# Date created = 12:20:26  February 15, 2024
 #
 # -------------------------------------------------------------------------- #
 #
@@ -38,30 +38,32 @@
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEBA4U19C8
-set_global_assignment -name TOP_LEVEL_ENTITY serializer
+set_global_assignment -name TOP_LEVEL_ENTITY serializer_top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
-set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:24:07  FEBRUARY 09, 2024"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "12:20:26  FEBRUARY 15, 2024"
 set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
-set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/serializer.sv
-set_global_assignment -name SDC_FILE serializer_top.sdc
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
-set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
 set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
-set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE AREA"
-set_location_assignment PIN_C6 -to clk_i
-set_instance_assignment -name VIRTUAL_PIN ON -to srst_i
-set_instance_assignment -name VIRTUAL_PIN ON -to data_i
-set_instance_assignment -name VIRTUAL_PIN ON -to data_val_i
-set_instance_assignment -name VIRTUAL_PIN ON -to data_mod_i
-set_instance_assignment -name VIRTUAL_PIN ON -to ser_data_o
-set_instance_assignment -name VIRTUAL_PIN ON -to ser_data_val_o
-set_instance_assignment -name VIRTUAL_PIN ON -to busy_o
+set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
+set_location_assignment PIN_U10 -to clk_150_mhz_i_top
+set_instance_assignment -name VIRTUAL_PIN ON -to srst_i_top
+set_instance_assignment -name VIRTUAL_PIN ON -to data_i_top
+set_instance_assignment -name VIRTUAL_PIN ON -to data_mod_i_top
+set_instance_assignment -name VIRTUAL_PIN ON -to data_val_i_top
+set_instance_assignment -name VIRTUAL_PIN ON -to ser_data_o_top
+set_instance_assignment -name VIRTUAL_PIN ON -to ser_data_val_o_top
+set_instance_assignment -name VIRTUAL_PIN ON -to busy_o_top
+set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/serializer_top.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/serializer.sv
+set_global_assignment -name SDC_FILE serializer_top.sdc
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to clk_150_mhz_i_top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
