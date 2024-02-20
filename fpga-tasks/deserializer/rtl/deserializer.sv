@@ -17,7 +17,7 @@ module deserializer #(
 
   always_ff @( posedge clk_i ) 
     if( srst_i )
-      cnt <= 1'b0;
+      cnt <= '0;
     else
       if( data_val_i)
         if( cnt != (DATA_WIDTH-1))
@@ -35,11 +35,8 @@ module deserializer #(
         deser_data_val <= 1'b0;
 
   always_ff @( posedge clk_i ) 
-    if( srst_i )
-      deser_data <= '0;
-    else
-      if( data_val_i )
-        deser_data <= { deser_data[(DATA_WIDTH-2):0], data_i };
+    if( data_val_i )
+      deser_data <= { deser_data[(DATA_WIDTH-2):0], data_i };
         
   assign deser_data_o     = deser_data;
   assign deser_data_val_o = deser_data_val;
