@@ -1,1 +1,1 @@
-Need to add custom tasks and pipeline. Task is not finished.
+Pipeline is not necessary for data with WIDTH from 2 to 32

@@ -1,5 +1,5 @@
 module priority_encoder_top#(
-  parameter WIDTH = 16
+  parameter WIDTH = 32
 )(
   input  logic              clk_i_top,
   input  logic              srst_i_top,

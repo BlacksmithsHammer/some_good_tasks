@@ -44,6 +44,19 @@ module priority_encoder_tb #(
   default clocking cb
     @( posedge clk );
   endclocking
+  
+  task add_custom_task( mailbox #( task_struct ) generated_tasks,
+                        logic    [WIDTH-1:0]     new_data,
+                        logic    [WIDTH-1:0]     data_left,
+                        logic    [WIDTH-1:0]     data_right);
+    task_struct new_task;
+    
+    new_task.data_i     = new_data;
+    new_task.data_left  = data_left;
+    new_task.data_right = data_right;
+
+    generated_tasks.put(new_task);
+  endtask
 
   task add_tasks( mailbox #( task_struct ) generated_tasks,
                   int                      cnt,
@@ -120,7 +133,7 @@ module priority_encoder_tb #(
       end
   endtask
 
-  int number_of_tasks = 100; //tasks per 1 group of specified tasks
+  int number_of_tasks = 10000; //tasks per 1 group of specified tasks
 
   initial
     begin
@@ -128,6 +141,15 @@ module priority_encoder_tb #(
       ##1;
       srst <= 1'b0;
       ##1;
+
+      //custom tasks
+      fork
+        add_custom_task(generated_tasks, '0, '0, '0);
+        send_tasks(generated_tasks, expected_data, 1);
+        check_results(expected_data, 1);
+      join
+      //end custom tasks
+
       for(int i = 0; i < 10; i = i + 1)
         for(int j = i; j < 10; j = j + 1)
           begin
