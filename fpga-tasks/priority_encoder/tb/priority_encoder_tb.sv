@@ -45,6 +45,16 @@ module priority_encoder_tb #(
     @( posedge clk );
   endclocking
   
+  function logic [WIDTH-1:0] find_right;
+    input  logic [WIDTH-1:0] data;
+    find_right = data & ( ~(data-1) );
+  endfunction
+
+  function logic [WIDTH-1:0] find_left;
+    input  logic [WIDTH-1:0] data;
+    find_left = { <<{ find_right({ <<{data} }) } };
+  endfunction
+
   task add_custom_task( mailbox #( task_struct ) generated_tasks,
                         logic    [WIDTH-1:0]     new_data,
                         logic    [WIDTH-1:0]     data_left,
@@ -64,34 +74,15 @@ module priority_encoder_tb #(
                   int                      right_border_skip);
     while( cnt-- > 0 )
       begin
-        int right_flag, left_flag;
         task_struct new_task;
 
-        right_flag = 0;
-        left_flag  = WIDTH-1;
-        new_task.data_i = $urandom_range(2**WIDTH-1, 0);
-        
-        while( ( new_task.data_i[right_flag] != 1'b1 ) && ( right_flag < WIDTH ) )
-          right_flag++;
-        while( ( new_task.data_i[left_flag]  != 1'b1 ) && ( left_flag > -1     ) )
-          left_flag--;
+        new_task.data_i     = $urandom_range(2**WIDTH-1, 0);
+        new_task.data_left  = find_left(new_task.data_i);
+        new_task.data_right = find_right(new_task.data_i);
 
-        //second flag is not necessary
-        if( right_flag != WIDTH )
-          begin
-            new_task.data_left              =  '0;
-            new_task.data_left [left_flag ] = 1'b1;
-            new_task.data_right             =  '0;
-            new_task.data_right[right_flag] = 1'b1;
-            //$display("%b   %b   %b", new_task.data_i, new_task.data_left, new_task.data_right);
-          end
-        else
-          begin
-            new_task.data_left  = '0;
-            new_task.data_right = '0;
-          end
         new_task.right_border_skip = right_border_skip;
         new_task.left_border_skip  = left_border_skip;
+
         generated_tasks.put(new_task);
       end
     
@@ -122,7 +113,7 @@ module priority_encoder_tb #(
         ##1;
         if( data_val_o == 1'b1)
           begin
-            cnt = cnt - 1;
+            cnt--;
             expected_data.get(tmp_task);
             if( ( tmp_task.data_left != data_left_o ) || ( tmp_task.data_right != data_right_o ) )
               begin

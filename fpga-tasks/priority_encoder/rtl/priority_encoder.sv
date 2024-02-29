@@ -16,11 +16,8 @@ module priority_encoder#(
   logic              data_val;
 
   always_ff @( posedge clk_i )
-    if( srst_i )
-      data <= '0;
-    else
-      if( data_val_i )
-        data <= data_i;
+    if( data_val_i )
+      data <= data_i;
   
   always_ff @( posedge clk_i )
     if( srst_i )
