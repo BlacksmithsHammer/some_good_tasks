@@ -1,5 +1,5 @@
 module bit_population_counter_top #(
-  parameter WIDTH         = 32,
+  parameter WIDTH         = 256,
   parameter SIZE_PIPELINE = 16
 )(
   input  logic                      clk_i_top,
@@ -8,7 +8,7 @@ module bit_population_counter_top #(
   input  logic [WIDTH-1:0]          data_i_top,
   input  logic                      data_val_i_top,
 
-  output logic [$clog2(WIDTH)+1:0]  data_o_top,
+  output logic [$clog2(WIDTH):0]    data_o_top,
   output logic                      data_val_o_top
 );
 
@@ -17,7 +17,7 @@ module bit_population_counter_top #(
   logic [WIDTH-1:0]          data;
   logic                      data_val;
 
-  logic [$clog2(WIDTH)+1:0]  data_out;
+  logic [$clog2(WIDTH):0]  data_out;
   logic                      data_val_out;
 
   bit_population_counter #(

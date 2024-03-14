@@ -1,5 +1,5 @@
 module bit_population_counter_tb #(
-  parameter WIDTH = 8
+  parameter WIDTH = 32
 );
 
   bit                        clk_i;
@@ -8,7 +8,7 @@ module bit_population_counter_tb #(
   logic [WIDTH-1:0]          data_i;
   logic                      data_val_i;
 
-  logic [$clog2(WIDTH)+1:0]  data_o;
+  logic [$clog2(WIDTH):0]    data_o;
   logic                      data_val_o;
 
    typedef struct {
@@ -86,9 +86,9 @@ module bit_population_counter_tb #(
   
   //checking the output data with the correct answer
   task check_tasks( mailbox expected_data,
-                   int     number_of_tasks);
+                    int     number_of_tasks);
     int tmp_cnt;
-    while(number_of_tasks-- > 0)
+    while(number_of_tasks > 0)
       begin
         ##1;
         if( data_val_o == 1'b1 )
@@ -114,6 +114,7 @@ module bit_population_counter_tb #(
         send_tasks(generated_tasks, expected_data, 200);
         check_tasks(expected_data, 200);
       join
+      $display("tests passed successfully!");
       $stop();
     end
 endmodule
