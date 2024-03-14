@@ -15,7 +15,7 @@ module bit_population_counter_tb #(
     //data that put into the data_i
     logic [WIDTH-1:0]          data;
     //expected data in data_o
-    logic [$clog2(WIDTH)+1:0]  cnt;
+    logic [$clog2(WIDTH):0]    cnt;
     //time without sending new tasks
     int                        skip;
   } task_struct;
@@ -46,30 +46,45 @@ module bit_population_counter_tb #(
 
   //creating the number of tasks = number_of_tasks and uploading them to a dynamic queue
   task add_tasks( mailbox #( task_struct ) generated_tasks,
-                 int                      number_of_tasks,
-                 int                      skip);
+                  int                      number_of_tasks,
+                  int                      skip);
     while(number_of_tasks-- > 0)
       begin
+        logic [WIDTH-1:0] tmp_cnt;      
         task_struct new_task;
         new_task.skip = skip;
         new_task.cnt  = '0;
-
-        for(int i = 0; i < WIDTH; i++)
-          begin
-            new_task.data[i] = $urandom_range(1, 0);
-            if (new_task.data[i] == 1'b1)
-              new_task.cnt++;
-          end
         
+        //like a converting decimal into the binary number
+        new_task.data = $urandom_range(2**WIDTH-1, 0);
+        tmp_cnt = new_task.data;
+        while(tmp_cnt > 0)
+          begin
+            new_task.cnt += tmp_cnt % 2;
+            tmp_cnt /= 2;
+          end
+
         generated_tasks.put(new_task);
       end
-    $display("all tasks added");
+  endtask
+
+  task add_custom_task( mailbox #( task_struct )  generated_tasks,
+                        logic   [WIDTH-1:0]       custom_data,
+                        logic   [$clog2(WIDTH):0] custom_cnt,
+                        int                       skip);
+
+    task_struct new_task;
+    new_task.skip = skip;
+    new_task.cnt  = custom_cnt;
+    new_task.data = custom_data;
+
+    generated_tasks.put(new_task);
   endtask
 
   //receiving new tasks from the queue
   task send_tasks( mailbox #( task_struct ) generated_tasks,
-                  mailbox                  expected_data,
-                  int                      number_of_tasks);
+                   mailbox                  expected_data,
+                   int                      number_of_tasks);
     while(number_of_tasks-- > 0)
       begin
         task_struct tmp_task;
@@ -106,14 +121,26 @@ module bit_population_counter_tb #(
 
   initial
     begin
+      int tasks_per_call = 2000;
       srst_i <= 1'b1;
       ##1;
       srst_i <= 1'b0;
+      ##1;
+      //start of custom tests
       fork
-        add_tasks(generated_tasks, 200, 0);
-        send_tasks(generated_tasks, expected_data, 200);
-        check_tasks(expected_data, 200);
+        add_custom_task(generated_tasks, '0, 0, 0);
+        add_custom_task(generated_tasks, '1, WIDTH, 0);
+        send_tasks(generated_tasks, expected_data, 2);
+        check_tasks(expected_data, 2);
       join
+      //end of custom tests
+      ##1;
+      for(int i = 0; i < 10; i++)
+        fork
+          add_tasks(generated_tasks, tasks_per_call, i);
+          send_tasks(generated_tasks, expected_data, tasks_per_call);
+          check_tasks(expected_data, tasks_per_call);
+        join
       $display("tests passed successfully!");
       $stop();
     end
