@@ -1,51 +1,38 @@
 module simple_counter#(
-  parameter WIDTH = 16
+  parameter WIDTH    = 16,
+  parameter DATA_O_D = 0
 )(
   input  logic                   clk_i,
 
   input  logic [WIDTH-1:0      ] data_i,
   output logic [$clog2(WIDTH):0] data_o
 );
-  
-  //logic [WIDTH-1:0 ]      data;
+
   logic [$clog2(WIDTH):0] cnt_out;
 
-  //always_ff @( posedge clk_i ) 
-  //  data <= data_i;
+  //1 or 0 for length of dff of data_o. something else - NONE
+  //obviously, it is possible to generate a long dff for data larger than 256 bits (lazy solution)
+  /*generate
+  if( DATA_O_D == 1 )
+    begin
+      always_ff @( posedge clk_i ) 
+        data_o <= cnt_out;
+    end
+  else if( DATA_O_D == 0 )
+    begin
+      assign data_o = cnt_out;
+    end
+  endgenerate*/
 
   always_ff @( posedge clk_i ) 
     data_o <= cnt_out;
 
   always_comb
     begin
-      logic [$clog2(WIDTH):0] cnt;
-      cnt = '0;
+      cnt_out = '0;
 
       for(int i = 0; i < WIDTH; i++) 
-        if( data_i[i] == 1'b1 )
-          cnt += 1'b1;
-      cnt_out = cnt;
+        cnt_out += data_i[i];
     end
 
-  
 endmodule
-
-/*
-module simple_counter#(
-  parameter WIDTH = 16
-)(
-  input  logic [WIDTH-1:0      ] data_i,
-  output logic [$clog2(WIDTH):0] data_o
-);
-
-  always_comb
-    begin
-      logic [$clog2(WIDTH):0] cnt;
-      cnt = '0;
-
-      for(int i = 0; i < WIDTH; i++) 
-        if( data_i[i] == 1'b1 )
-          cnt += 1'b1;
-      data_o = cnt;
-    end
-endmodule*/

@@ -1,5 +1,5 @@
 module bit_population_counter_tb #(
-  parameter WIDTH = 32
+  parameter WIDTH = 64
 );
 
   bit                        clk_i;
@@ -50,13 +50,17 @@ module bit_population_counter_tb #(
                   int                      skip);
     while(number_of_tasks-- > 0)
       begin
+        logic [7:0][31:0] tmp_data; 
         logic [WIDTH-1:0] tmp_cnt;      
         task_struct new_task;
         new_task.skip = skip;
         new_task.cnt  = '0;
         
+        for (int i = 0; i < 8; i++)
+          tmp_data[i] = $urandom_range(2**32-1, 0);
+      
         //like a converting decimal into the binary number
-        new_task.data = $urandom_range(2**WIDTH-1, 0);
+        new_task.data = tmp_data;
         tmp_cnt = new_task.data;
         while(tmp_cnt > 0)
           begin
@@ -112,8 +116,8 @@ module bit_population_counter_tb #(
             expected_data.get(tmp_cnt);
             if( tmp_cnt != data_o)
               begin
-                $display("Wrong data in time: ", $time);
-                $stop;
+                $display("Wrong data in time: ", $time, "WIDTH = ", WIDTH, "   expected: ", tmp_cnt);
+                $stop();
               end
           end
       end
@@ -141,7 +145,7 @@ module bit_population_counter_tb #(
           send_tasks(generated_tasks, expected_data, tasks_per_call);
           check_tasks(expected_data, tasks_per_call);
         join
-      $display("tests passed successfully!");
+      $display("tests passed successfully with WIDTH =", WIDTH);
       $stop();
     end
 endmodule
