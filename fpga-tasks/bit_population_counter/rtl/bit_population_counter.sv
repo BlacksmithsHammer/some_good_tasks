@@ -30,8 +30,7 @@ module bit_population_counter#(
     if( WIDTH <= 24 )
       begin
         simple_counter#(
-          .WIDTH    ( WIDTH ),
-          .DATA_O_D ( 0     )
+          .WIDTH  ( WIDTH )
         ) simple_counter_ins (
           .clk_i  ( clk_i  ),
 
@@ -61,8 +60,7 @@ module bit_population_counter#(
             logic [$clog2(SIZE_PIPELINE):0] tmp_cnt;
 
             simple_counter#(
-              .WIDTH    ( SIZE_PIPELINE ),
-              .DATA_O_D ( 1             )
+              .WIDTH  ( SIZE_PIPELINE )
             ) simple_counter_ins (
               .clk_i  ( clk_i                                           ),
 
