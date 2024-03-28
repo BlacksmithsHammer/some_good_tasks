@@ -1,8 +1,8 @@
 module debouncer #(
   //1 mhz == 1 000 000 Hz
-  parameter CLK_FREQ_MHZ,
+  parameter CLK_FREQ_MHZ   = 150,
   //1 ns  == 0,000 000 001 s
-  parameter GLITCH_TIME_NS
+  parameter GLITCH_TIME_NS = 100
 )(
   input  logic clk_i,
 
