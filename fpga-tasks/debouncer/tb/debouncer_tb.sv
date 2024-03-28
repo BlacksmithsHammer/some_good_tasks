@@ -64,6 +64,12 @@ initial
                 ##3;
                 $stop();
               end
+            if( key_pressed_stb == 1'b0 )
+              if( $time == expected_curr_stb == 1'b1 || $time == expected_prev_stb || $time == expected_prev_prev_stb )
+                begin
+                  $display("EXPECTED STB BUT NO AT ", $time);
+                  $stop();
+                end
             ##1;
           end
         key = 1'b1;
