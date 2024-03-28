@@ -5,7 +5,8 @@ module debouncer_tb #(
   parameter  GLITCH_TIME_NS = 150,
 
   localparam int GLITCH_TIME_CYCLES  = $ceil(real'(CLK_FREQ_MHZ*GLITCH_TIME_NS)/64'd1000),
-  localparam int GLITCH_CYCLES_WIDTH = $clog2(GLITCH_TIME_CYCLES)
+  localparam int GLITCH_CYCLES_WIDTH = $clog2(GLITCH_TIME_CYCLES),
+  localparam int TIME_OF_CYCLE       = 1000000000/(CLK_FREQ_MHZ*1000000)
 );
 
 bit clk_i;
@@ -13,8 +14,8 @@ bit clk_i;
 logic key;
 logic key_pressed_stb;
 
-int last_stb_pressed_time;
-int last_key_pressed;
+// int last_stb_pressed_time;
+// int last_key_pressed;
 
 
 initial
@@ -36,58 +37,44 @@ debouncer #(
   .key_pressed_stb_o ( key_pressed_stb )
 );
 
-always_ff @( negedge key )
-  begin
-    $display("KEY PRESSED AT: ", $time);
-    last_key_pressed = $time;
-  end
-  
-
-always_ff @( negedge key_pressed_stb )
-  begin
-    $display("GOT STB AT: ", $time);
-    last_stb_pressed_time = $time;
-    $display("diff: ", last_stb_pressed_time - last_key_pressed);
-  end
-
+time expected_prev_prev_stb;
+time expected_prev_stb;
+time expected_curr_stb;
+int  num_cycles;
 initial 
   begin
-    key = 1'b0;
-    ##20;
     key = 1'b1;
-    ##7;
-    key = 1'b0;
-    ##100;
-    key = 1'b1;
-    ##1;
-    key = 1'b0;
-    ##100;
-    key = 1'b1;
-    ##5;
-    key = 1'b0;
-    ##5;
-    key = 1'b1;
-    ##100;
-    key = 1'b0;
-    ##30;
-    key = 1'b1;
-    ##100;
-    for (int i = 0; i < 30; i = i + 1)
+    for(int test_num = 0; test_num < 100000; test_num = test_num + 1)
       begin
-        key = 1;
-        ##1
-        key = 0;
-        ##(i);
+        //if GLITCH more than 10000ns - should use an other way to set range
+        num_cycles = $urandom_range(GLITCH_TIME_NS, 1);
+        // + 3 because DFF-delay of resync key_i
+        if( num_cycles >= GLITCH_TIME_CYCLES )
+          expected_curr_stb = $time + TIME_OF_CYCLE*(GLITCH_TIME_CYCLES + 3);
+        else
+          expected_curr_stb = '0;
+
+        for(int test_cycle = 0; test_cycle < num_cycles; test_cycle = test_cycle + 1)
+          begin
+            key = 1'b0;
+            if( key_pressed_stb == 1'b1 && $time != expected_curr_stb && $time != expected_prev_stb && $time != expected_prev_prev_stb )
+              begin
+                $display("WRONG STB AT ", $time);
+                $display("expected stb's at: ", expected_curr_stb, "or", expected_prev_stb, " or ", expected_prev_prev_stb);
+                ##3;
+                $stop();
+              end
+            ##1;
+          end
+        key = 1'b1;
+        expected_prev_prev_stb = expected_prev_stb;
+        expected_prev_stb      = expected_curr_stb;
+        //can randomize pause to deep testing
+        ##1;
+
       end
 
-    for (int i = 0; i < 500; i = i + 1)
-     begin
-       key = $urandom_range(1, 0);
-       ##($urandom_range(100, 1));
-     end
-
-    
-
+    $display("============================\nTESTS PASSED SUCCESSFULLY\n============================\n");
     $stop();
   end
     
