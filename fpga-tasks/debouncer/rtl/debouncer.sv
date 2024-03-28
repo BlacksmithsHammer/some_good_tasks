@@ -2,8 +2,14 @@ module debouncer #(
   //1 mhz == 1 000 000 Hz
   parameter CLK_FREQ_MHZ,
   //1 ns  == 0,000 000 001 s
-  parameter GLITCH_TIME_NS,
+  parameter GLITCH_TIME_NS
+)(
+  input  logic clk_i,
 
+  input  logic key_i,
+
+  output logic key_pressed_stb_o
+);
   //======================================================================================
   // CLK_FREQ_MHZ*1000000 - clock Hz per second
   // CLK_FREQ_MHZ*1000000/1000000000 - cycles per 1ns, then *GLITCH_TIME_NS to get
@@ -19,15 +25,8 @@ module debouncer #(
   ////////////////////////////////////////////////////////////////////////////////////////
 
   //parameter int GLITCH_TIME_CYCLES  = $ceil(real'(CLK_FREQ_MHZ*GLITCH_TIME_NS)/1000) 
-  parameter int GLITCH_TIME_CYCLES  = (CLK_FREQ_MHZ*GLITCH_TIME_NS + 1000 - 1)/1000,
-  parameter int GLITCH_CYCLES_WIDTH = $clog2(GLITCH_TIME_CYCLES)
-)(
-  input  logic clk_i,
-
-  input  logic key_i,
-
-  output logic key_pressed_stb_o
-);
+  localparam int GLITCH_TIME_CYCLES  = (CLK_FREQ_MHZ*GLITCH_TIME_NS + 1000 - 1)/1000;
+  localparam int GLITCH_CYCLES_WIDTH = $clog2(GLITCH_TIME_CYCLES);
 
   logic [2:0]                   key_press_d;
 
