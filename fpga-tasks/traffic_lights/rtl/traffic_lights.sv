@@ -50,11 +50,13 @@ module traffic_lights #(
 // counter for time of red, green, yellow and red-yellow light
   logic [15:0]  cnt_rgb_light = '0;
 // counter for green-blink ticks light
-  logic [$clog2(hz_ms*BLINK_GREEN_TIME_TICK):0]   cnt_green_periods_blinks;
+  logic [$clog2(hz_ms*BLINK_GREEN_TIME_TICK):0] cnt_green_periods_blinks;
 // counter for one half-period blink, example: 
 //   period      = 4s
 //   half_period = 2s = cnt_blink, in 1 period 2 blinks (off and on)
   logic [$clog2(hz_ms*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
+// light or no at half-period in yellow manual mode
+  logic yellow_manual_blink;
 
   enum logic [2:0] {
     RED,
@@ -93,10 +95,13 @@ module traffic_lights #(
           cnt_green_periods_blinks <= '0;
     
   always_ff @( posedge clk_i )
-    if( srst_i )
+    if( srst_i || ( cmd_valid_i == 1'b1 && cmd_type_i == 2))
       cnt_blink <= '0;
     else
-      if ( state == GREEN_BLINK && cnt_blink < (hz_ms*BLINK_HALF_PERIOD_MS - 1) )
+      if( 
+        ( state == GREEN_BLINK || state == YELLOW_MANUAL ) && 
+          cnt_blink < (hz_ms*BLINK_HALF_PERIOD_MS - 1)
+        )
         cnt_blink <= cnt_blink + 1'b1;
       else
         cnt_blink <= '0;
@@ -124,8 +129,17 @@ module traffic_lights #(
     else
       if( state == YELLOW_MANUAL && cmd_valid_i == 1'b1 && cmd_type_i == 5 )
         cycles_yellow <= cmd_data_i;
+// logic for YELLOW_MANUAL blinks
+  always_ff @( posedge clk_i )
+    if( srst_i || state != YELLOW_MANUAL)
+      yellow_manual_blink <= 1'b0;
+    else
+      if( cnt_blink == ( hz_ms*BLINK_HALF_PERIOD_MS - 1 ) )
+        yellow_manual_blink <= ~yellow_manual_blink;
+      
 
-// FSM stage-changer
+
+// FSM state-changer
   always_ff @( posedge clk_i ) 
     if( srst_i )
       begin
@@ -208,14 +222,17 @@ module traffic_lights #(
             else
               next_state = LIGHTS_OFF;
           end
+        default:
+          begin
+            next_state = LIGHTS_OFF;
+          end
       endcase
 
       if( cmd_valid_i == 1'b1 && cmd_type_i == 1 )
         next_state = LIGHTS_OFF;
 
       if( cmd_valid_i == 1'b1 && cmd_type_i == 2 )
-        next_state = YELLOW_MANUAL;  
-
+        next_state = YELLOW_MANUAL;
     end
 //===================================================================
 // end FSM states
@@ -234,7 +251,7 @@ module traffic_lights #(
       yellow_o = ( 
           state == YELLOW     ||
           state == RED_YELLOW ||
-        ( state == YELLOW_MANUAL )
+        ( state == YELLOW_MANUAL && yellow_manual_blink)
       );
         
       green_o  = ( 
