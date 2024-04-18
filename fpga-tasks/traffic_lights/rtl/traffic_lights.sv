@@ -167,7 +167,6 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
         else
           cnt_blink <= '0;
 
-// changes dynamic time of green light
   always_ff @( posedge clk_i )
     if( srst_i )
       cycles_green <= DEFAULT_RGY_SETTINGS[15:0];
@@ -175,7 +174,6 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
       if( state == YELLOW_MANUAL_S && cmd_valid_i == 1'b1 && cmd_type_i == CMD_SET_GREEN )
         cycles_green <= cmd_data_i;
 
-// changes dynamic time of red light
   always_ff @( posedge clk_i )
     if( srst_i )
       cycles_red <= DEFAULT_RGY_SETTINGS[15:0];
@@ -183,7 +181,6 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
       if( state == YELLOW_MANUAL_S && cmd_valid_i == 1'b1 && cmd_type_i == CMD_SET_RED )
         cycles_red <= cmd_data_i;
 
-// changes dynamic time of yellow light
   always_ff @( posedge clk_i )
     if( srst_i )
       cycles_yellow <= DEFAULT_RGY_SETTINGS[15:0];
@@ -260,9 +257,8 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
         GREEN_BLINK_S:
           begin
             if( 
-                cnt_green_periods_blinks != HZ_MS*BLINK_GREEN_TIME_TICK &&
-              // fix the problem with 1 cycle without lights
-                green_blinks_fix
+                (  cnt_green_periods_blinks != HZ_MS*BLINK_GREEN_TIME_TICK - 1 ) ||
+                (  cnt_blink != HZ_MS*BLINK_HALF_PERIOD_MS - 1 )
               )
               next_state = GREEN_BLINK_S;
             else
