@@ -1,7 +1,7 @@
 module traffic_lights_top #(
-  parameter BLINK_HALF_PERIOD_MS  = 3,
-  parameter BLINK_GREEN_TIME_TICK = 4,
-  parameter RED_YELLOW_MS         = 7
+  parameter BLINK_HALF_PERIOD_MS  = 1000,
+  parameter BLINK_GREEN_TIME_TICK = 10,
+  parameter RED_YELLOW_MS         = 5000
 )(
   input          clk_i_top,
   input          srst_i_top,

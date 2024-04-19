@@ -41,7 +41,11 @@ module traffic_lights #(
 // may be need write a function to convert ms into clk_i cycles
   localparam HZ_MS = 2000 / 1000;
 // time of red-yellow light in cycles
-  localparam CYCLES_RED_YELLOW       = RED_YELLOW_MS*HZ_MS;
+  localparam CYCLES_RED_YELLOW = RED_YELLOW_MS*HZ_MS;
+// number of blinks in
+  localparam NUMBER_BLINKS = HZ_MS*BLINK_GREEN_TIME_TICK;
+  
+  localparam TIME_OF_BLINK = HZ_MS*BLINK_HALF_PERIOD_MS;
 // default times of RED, GREEN and YELLOW in cycles (clk)
   localparam DEFAULT_RGY_SETTINGS = 10;
 // cmd_data_i types
@@ -72,15 +76,11 @@ module traffic_lights #(
   logic [15:0]  cnt_cycles_green;
 
 // counter for green-blink ticks light
-  logic [$clog2(HZ_MS*BLINK_GREEN_TIME_TICK):0] cnt_green_periods_blinks;
-
-// wire for long logic of green blinks
-  logic green_blinks_fix;
-
+  logic [$clog2(NUMBER_BLINKS):0] cnt_green_periods_blinks;
 // counter for one half-period blink, example: 
 //   period      = 4s
 //   half_period = 2s = cnt_blink, in 1 period 2 blinks (off and on)
-logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
+  logic [$clog2(TIME_OF_BLINK):0]  cnt_blink;
 // light or no at half-period in yellow manual mode
   logic yellow_manual_blink;
 
@@ -93,6 +93,13 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
     YELLOW_MANUAL_S,
     LIGHTS_OFF_S
   } state, next_state;
+
+// wire for long logic of green blinks
+  logic green_blinks_fix_cond;
+// wire for checking allow to write new rules for lights
+  logic allow_changes;
+// logic wire for check when one blink finish
+  logic end_of_blink;
 //===================================================================
 // end variables
 //===================================================================
@@ -146,7 +153,7 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
     if( srst_i )
       cnt_green_periods_blinks <= '0;
     else
-      if( state == GREEN_BLINK_S && cnt_blink == HZ_MS*BLINK_HALF_PERIOD_MS - 1 )
+      if( state == GREEN_BLINK_S && cnt_blink == TIME_OF_BLINK - 1 )
         cnt_green_periods_blinks <= cnt_green_periods_blinks + 1'b1;
       else
         if ( state != GREEN_BLINK_S )
@@ -159,10 +166,7 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
       if( cmd_valid_i == 1'b1 && cmd_type_i == CMD_MANUAL_MODE)
         cnt_blink <= '0;
       else
-        if( 
-          ( state == GREEN_BLINK_S || state == YELLOW_MANUAL_S ) && 
-            cnt_blink < (HZ_MS*BLINK_HALF_PERIOD_MS - 1)
-          )
+        if( end_of_blink )
           cnt_blink <= cnt_blink + 1'b1;
         else
           cnt_blink <= '0;
@@ -171,21 +175,21 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
     if( srst_i )
       cycles_green <= DEFAULT_RGY_SETTINGS[15:0];
     else
-      if( state == YELLOW_MANUAL_S && cmd_valid_i == 1'b1 && cmd_type_i == CMD_SET_GREEN )
+      if( allow_changes && cmd_type_i == CMD_SET_GREEN )
         cycles_green <= cmd_data_i;
 
   always_ff @( posedge clk_i )
     if( srst_i )
       cycles_red <= DEFAULT_RGY_SETTINGS[15:0];
     else
-      if( state == YELLOW_MANUAL_S && cmd_valid_i == 1'b1 && cmd_type_i == CMD_SET_RED )
+      if( allow_changes && cmd_type_i == CMD_SET_RED )
         cycles_red <= cmd_data_i;
 
   always_ff @( posedge clk_i )
     if( srst_i )
       cycles_yellow <= DEFAULT_RGY_SETTINGS[15:0];
     else
-      if( state == YELLOW_MANUAL_S && cmd_valid_i == 1'b1 && cmd_type_i == CMD_SET_YELLOW )
+      if( allow_changes && cmd_type_i == CMD_SET_YELLOW )
         cycles_yellow <= cmd_data_i;
 
 // logic for YELLOW_MANUAL blinks
@@ -196,7 +200,7 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
       if( state != YELLOW_MANUAL_S )
         yellow_manual_blink <= 1'b0;
       else
-        if( cnt_blink == ( HZ_MS*BLINK_HALF_PERIOD_MS - 1 ) )
+        if( cnt_blink == ( TIME_OF_BLINK - 1 ) )
           yellow_manual_blink <= ~yellow_manual_blink;
 
 // FSM state-changer
@@ -214,10 +218,16 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
 // combinational logic
 //===================================================================
 // fix to fill 1 time (1 cycle) when light after green blinks of next state delay
-  assign green_blinks_fix = ~(
-    (  cnt_green_periods_blinks == HZ_MS*BLINK_GREEN_TIME_TICK - 1 ) &&
-    (  cnt_blink == HZ_MS*BLINK_HALF_PERIOD_MS - 1 )
+  assign green_blinks_fix_cond = (
+    (  cnt_green_periods_blinks == NUMBER_BLINKS - 1 ) &&
+    (  cnt_blink == TIME_OF_BLINK - 1 )
   );
+
+  assign allow_changes = state == YELLOW_MANUAL_S && cmd_valid_i == 1'b1;
+
+  assign end_of_blink = ( state == GREEN_BLINK_S || 
+                          state == YELLOW_MANUAL_S ) && 
+                        ( cnt_blink < (TIME_OF_BLINK - 1) );
 //===================================================================
 // end combinational logic
 //===================================================================
@@ -227,49 +237,35 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
 //===================================================================
   always_comb 
     begin
-
       next_state = state;
       case( next_state )
         RED_S:
           begin
-            if( cnt_cycles_red != cycles_red - 1 )
-              next_state = RED_S;
-            else
+            if( cnt_cycles_red == cycles_red - 1 )
               next_state = ( RED_YELLOW_MS == 0 ) ? GREEN_S : RED_YELLOW_S;
           end
 
         RED_YELLOW_S:
           begin
-            if( cnt_cycles_red_yellow != CYCLES_RED_YELLOW - 1 )
-              next_state = RED_YELLOW_S;
-            else
+            if( cnt_cycles_red_yellow == CYCLES_RED_YELLOW - 1 )
               next_state = GREEN_S;
           end
 
         GREEN_S:
           begin
-            if( cnt_cycles_green != cycles_green - 1 )
-              next_state = GREEN_S;
-            else
+            if( cnt_cycles_green == cycles_green - 1 )
               next_state = GREEN_BLINK_S;
           end
 
         GREEN_BLINK_S:
           begin
-            if( 
-                (  cnt_green_periods_blinks != HZ_MS*BLINK_GREEN_TIME_TICK - 1 ) ||
-                (  cnt_blink != HZ_MS*BLINK_HALF_PERIOD_MS - 1 )
-              )
-              next_state = GREEN_BLINK_S;
-            else
+            if( green_blinks_fix_cond )
               next_state = YELLOW_S;
           end
 
         YELLOW_S:
           begin
-            if( cnt_cycles_yellow != cycles_yellow - 1 )
-              next_state = YELLOW_S;
-            else
+            if( cnt_cycles_yellow == cycles_yellow - 1 )
               next_state = RED_S;
           end
 
@@ -277,21 +273,17 @@ logic [$clog2(HZ_MS*BLINK_HALF_PERIOD_MS):0]  cnt_blink;
           begin
             if( cmd_valid_i == 1'b1 && cmd_type_i == CMD_ON )
               next_state = RED_S;
-            else
-              next_state = YELLOW_MANUAL_S;
           end
 
         LIGHTS_OFF_S:
           begin
             if( cmd_valid_i == 1'b1 && cmd_type_i == CMD_ON )
               next_state = RED_S;
-            else
-              next_state = LIGHTS_OFF_S;
           end
 
         default:
           begin
-            next_state = LIGHTS_OFF_S;
+            next_state = state;
           end
       endcase
 
