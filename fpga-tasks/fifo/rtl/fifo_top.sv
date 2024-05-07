@@ -1,10 +1,10 @@
 module fifo_top #(
   parameter DWIDTH             = 64,
-  parameter AWIDTH             = 15,
+  parameter AWIDTH             = 10,
   parameter SHOWAHEAD          = 1,
   parameter ALMOST_FULL_VALUE  = 12,
   parameter ALMOST_EMPTY_VALUE = 2,
-  parameter REGISTER_OUTPUT    = 0
+  parameter REGISTER_OUTPUT    = 1
 )(
   input  logic clk_i_top,
   input  logic srst_i_top,
