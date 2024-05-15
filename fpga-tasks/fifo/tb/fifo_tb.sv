@@ -1,5 +1,3 @@
-
-
 `timescale 1 ps / 1 ps
 
 module fifo_tb #(
@@ -8,7 +6,7 @@ module fifo_tb #(
   parameter SHOWAHEAD          = 1,
   parameter ALMOST_FULL_VALUE  = 12,
   parameter ALMOST_EMPTY_VALUE = 4,
-  parameter REGISTER_OUTPUT    = 1
+  parameter REGISTER_OUTPUT    = 0
 );
 
 
@@ -33,8 +31,33 @@ module fifo_tb #(
     .SHOWAHEAD          ( SHOWAHEAD          ),
     .ALMOST_FULL_VALUE  ( ALMOST_FULL_VALUE  ),
     .ALMOST_EMPTY_VALUE ( ALMOST_EMPTY_VALUE ),
-    .REGISTER_OUTPUT    ( REGISTER_OUTPUT    )
+    .REGISTER_OUTPUT    ( 0                  )
   ) DUT (
+    .clk_i  ( clk  ),
+    .srst_i ( srst ),
+
+    .data_i  ( data ),
+    .wrreq_i ( wrreq ),
+    .rdreq_i ( rdreq ),
+  
+    .q_o (),
+
+    .empty_o (),
+    .full_o  (),
+    .usedw_o (),
+
+    .almost_full_o  (),
+    .almost_empty_o ()
+  );
+
+  fifo #(
+    .DWIDTH             ( DWIDTH             ),
+    .AWIDTH             ( AWIDTH             ),
+    .SHOWAHEAD          ( SHOWAHEAD          ),
+    .ALMOST_FULL_VALUE  ( ALMOST_FULL_VALUE  ),
+    .ALMOST_EMPTY_VALUE ( ALMOST_EMPTY_VALUE ),
+    .REGISTER_OUTPUT    ( 1                  )
+  ) DUT_reg (
     .clk_i  ( clk  ),
     .srst_i ( srst ),
 
@@ -207,37 +230,13 @@ module fifo_tb #(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   task send_req(logic [DWIDTH-1:0]  req_data);
     data  = req_data;
     wrreq = 1'b1;
     ##1;
     wrreq = 1'b0;
   endtask
+  
 
   initial
     begin
@@ -250,18 +249,58 @@ module fifo_tb #(
 
       rdreq = 1'b0;
       for(int i = 0; i < 16; i++)
-        send_req($urandom_range(2**DWIDTH-1, 0));
+        begin
+          rdreq = $urandom_range(1, 1);
+          send_req($urandom_range(2**DWIDTH-1, 0));
+        end
 
       rdreq = 1'b1;
       ##16;
 
 
+      rdreq = 1'b1;
+      for(int i = 0; i < 2**AWIDTH; i++)
+        send_req($urandom_range(2**DWIDTH-1, 0));
+      ##5;
+      rdreq = 1'b1;
+      ##10;
+
+      wrreq = 1'b1;
       rdreq = 1'b0;
       for(int i = 0; i < 2**AWIDTH; i++)
         send_req($urandom_range(2**DWIDTH-1, 0));
       ##5;
       rdreq = 1'b1;
-      ##100;
+      ##10;
+
+      
+
+      rdreq = 1'b1;
+      ##20;
+
+
+      wrreq = 1'b1;
+      rdreq = 1'b0;
+      for(int i = 0; i < 2**AWIDTH-1; i++)
+        send_req($urandom_range(2**DWIDTH-1, 0));
+      rdreq = 1'b1;
+      ##20;
+
+      wrreq = 1'b1;
+      rdreq = 1'b0;
+      for(int i = 0; i < 2**AWIDTH; i++)
+        send_req($urandom_range(2**DWIDTH-1, 0));
+      rdreq = 1'b1;
+      ##20;
+
+      wrreq = 1'b1;
+      rdreq = 1'b0;
+      for(int i = 0; i < 2**AWIDTH; i++)
+        send_req($urandom_range(2**DWIDTH-1, 0));
+      rdreq = 1'b1;
+      ##4;
+      wrreq = 1'b1;
+      ##20;
 
       
       $stop();

@@ -1,41 +1,51 @@
 module sc_ram #(
-  parameter DWIDTH          = 16,
-  parameter AWIDTH          = 4,
-  parameter REGISTER_OUTPUT = 1
+  parameter DWIDTH          = 64,
+  parameter AWIDTH          = 10,
+  parameter REGISTER_OUTPUT = 0
 )(
-  input               clk_i,
+  input clk_i,
 
-  input  [AWIDTH-1:0] wrreq_i, 
-  input  [AWIDTH-1:0] rdreq_i, 
-  
   input  [DWIDTH-1:0] data_i,
 
-  output [DWIDTH-1:0] data_o
+  input  [AWIDTH-1:0] rd_addr,
+  input  [AWIDTH-1:0] wr_addr,
 
+  input               wr_en,
+  input               rd_en,
+
+  output reg [DWIDTH-1:0] data_o
 );
-
-  reg   [DWIDTH-1:0] mem [2**AWIDTH-1:0];
-
+  
+  reg [DWIDTH-1:0] mem [2**AWIDTH-1:0];
 
   generate
-    logic [DWIDTH-1:0] q;
+    if( REGISTER_OUTPUT )
+      begin
+        reg [DWIDTH-1:0] data_reg;
 
-    if( REGISTER_OUTPUT == 1 )
-      begin
+        always_ff @(posedge clk_i)
+          if( wr_en )
+            mem[wr_addr] <= data_i;
+    
         always_ff @( posedge clk_i )
-          begin
-            mem[wrreq_i] <= data_i;
-            q <= mem[rdreq_i];
-          end
+          data_reg <= mem[rd_addr];
+
+        always_ff @( posedge clk_i )
+		      if( rd_en )
+		        data_o <= data_reg;
       end
+
     else
+
       begin
-        always_ff @( posedge clk_i )
-            mem[wrreq_i] <= data_i;
-        assign q = mem[rdreq_i];
+        always_ff @(posedge clk_i)
+          if( wr_en )
+            mem[wr_addr] <= data_i;
+
+        always_ff @(posedge clk_i)
+          if( rd_en )
+            data_o <= mem[rd_addr];
       end
   endgenerate
-
-  assign data_o = q;
 
 endmodule

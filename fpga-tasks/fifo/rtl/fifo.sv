@@ -1,6 +1,6 @@
 module fifo #(
-  parameter DWIDTH             = 16,
-  parameter AWIDTH             = 4,
+  parameter DWIDTH             = 64,
+  parameter AWIDTH             = 10,
   parameter SHOWAHEAD          = 1,
   parameter ALMOST_FULL_VALUE  = 12,
   parameter ALMOST_EMPTY_VALUE = 2,
@@ -12,110 +12,108 @@ module fifo #(
   input  logic [DWIDTH-1:0]  data_i,
   input  logic               wrreq_i,
   input  logic               rdreq_i,
-  
-  output logic [DWIDTH-1:0]  q_o,
 
   output logic               empty_o,
   output logic               full_o,
   output logic [AWIDTH:0]    usedw_o,
 
   output logic               almost_full_o,
-  output logic               almost_empty_o
+  output logic               almost_empty_o,
+
+  output logic [DWIDTH-1:0]  q_o
 );
 
+  logic  [AWIDTH-1:0] rd_addr;
+  logic  [AWIDTH-1:0] wr_addr;
 
+  logic  [AWIDTH-1:0] rd_addr_reg = 0;
+  logic  [AWIDTH-1:0] wr_addr_reg = 0;
 
-//===============================================
-// variables block
-//===============================================
-// main memory array
-  // logic [DWIDTH-1:0]  mem [2**AWIDTH-1:0];
-  // logic [DWIDTH-1:0]  tmp_q;
+  logic               wr_en;
+  logic               rd_en;
 
-  logic [AWIDTH-1:0]  addr_rd;
-  logic [AWIDTH-1:0]  addr_wr;
+  logic  [AWIDTH:0]   usedw  = 0;
 
-  logic [AWIDTH:0]    usedw;
-  logic [DWIDTH-1:0]  ram_q_o;
-  logic [DWIDTH-1:0]  q_tmp;
+  generate
+    if( REGISTER_OUTPUT )
 
+      begin
+        logic data_d = 0;
 
-// wires for check a limits of usedw
-  logic allow_read;
-  logic allow_write;
+        assign wr_en = (wrreq_i && (usedw + data_d) != 2**AWIDTH) ? 1'b1 : 1'b0;
+        assign rd_en = (rdreq_i && usedw != 0 ) ? 1'b1 : 1'b0;
 
-// wires for check a new valid requests
-  logic valid_rdreq;
-  logic valid_wrreq;
+        always_ff @( posedge clk_i )
+          if( wr_en )
+            wr_addr_reg <= wr_addr_reg + 1'b1;
+        
+        always_ff @( posedge clk_i )
+          if( rd_en )
+            rd_addr_reg <= rd_addr_reg + 1'b1;
 
-//===============================================
-// combinational block
-//===============================================
+        always_ff @( posedge clk_i )
+          if( wr_en )
+            data_d <= 1'b1;
+          else
+            data_d <= 1'b0;
 
-  assign allow_write = ( usedw < 2**AWIDTH ) ? 1'b1 : 1'b0;
-  assign allow_read  = ( usedw > 0         ) ? 1'b1 : 1'b0;
+        always_ff @( posedge clk_i )
+          usedw <= usedw + data_d - rd_en;
 
-  assign valid_wrreq = ( allow_write && wrreq_i ) ? 1'b1 : 1'b0;
-  assign valid_rdreq = ( allow_read  && rdreq_i ) ? 1'b1 : 1'b0;
-
-//===============================================
-// registers block
-//===============================================
-
-  always_ff @( posedge clk_i )
-    if( srst_i )
-      addr_rd <= '0;
+        
+        assign wr_addr = wr_addr_reg;
+        assign rd_addr = ( usedw != 0 && rd_en ) ? rd_addr_reg + 1'b1 : rd_addr_reg ;
+        assign full_o  = ( ( usedw + data_d ) == 2**AWIDTH );
+        assign usedw_o = ( usedw + data_d );
+        assign empty_o = ( usedw == 0 );
+      end
     else
-      if( valid_rdreq )
-        addr_rd <= addr_rd + 1'b1;
+      begin
+        assign wr_en = (wrreq_i && usedw != 2**AWIDTH) ? 1'b1 : 1'b0;
+        assign rd_en = (rdreq_i && usedw != '0) ? 1'b1 : 1'b0;
 
-  always_ff @( posedge clk_i )
-    if( srst_i )
-      addr_wr <= '0;
-    else
-      if( valid_wrreq )
-        addr_wr <= addr_wr + 1'b1;
-
-  always_ff @( posedge clk_i )
-    if( srst_i )
-      usedw <= '0;
-    else
-      if( valid_wrreq && ~valid_rdreq )
-        usedw <= usedw + 1'b1;
-      else
-        if( ~valid_wrreq && valid_rdreq )
-          usedw <= usedw - 1'b1;
+        always_ff @( posedge clk_i )
+          if( wr_en )
+            wr_addr_reg <= wr_addr_reg + 1'b1;
   
-  // always_ff @( posedge clk_i )
-  //   q_tmp <= ram_q_o;
-
-//===============================================
-// side modules block
-//===============================================
-sc_ram #(
-  .DWIDTH          ( DWIDTH          ),
-  .AWIDTH          ( AWIDTH          ),
-  .REGISTER_OUTPUT ( REGISTER_OUTPUT )
-) ram_ins (
-  .clk_i   ( clk_i   ),
-
-  .wrreq_i ( addr_wr ),
-  .rdreq_i ( addr_rd ),
+        always_ff @( posedge clk_i )
+          if( rd_en )
+            rd_addr_reg <= rd_addr_reg + 1'b1;
   
-  .data_i  ( data_i  ),
-  .data_o  ( q_tmp )
-);
+        always_ff @( posedge clk_i )
+          if( wr_en && !rd_en )
+            usedw <= usedw + 1'b1;
+          else
+            if( !wr_en && rd_en )
+              usedw <= usedw - 1'b1;
+        
+        assign wr_addr = wr_addr_reg;
+        assign rd_addr = rd_addr_reg;
+        assign full_o  = ( usedw == 2**AWIDTH );
+        assign usedw_o = usedw;
+        assign empty_o = ( usedw == 0 );
+      end
+  endgenerate
 
-//===============================================
-// output assignments block
-//===============================================
-  assign usedw_o = usedw;
-  assign q_o     = q_tmp;
 
-  assign almost_full_o  = ( usedw >= ALMOST_FULL_VALUE  ) ? 1'b1 : 1'b0;
-  assign almost_empty_o = ( usedw  < ALMOST_EMPTY_VALUE ) ? 1'b1 : 1'b0;
+  sc_ram #(
+    .DWIDTH          ( DWIDTH          ),
+    .AWIDTH          ( AWIDTH          ),
+    .REGISTER_OUTPUT ( REGISTER_OUTPUT )
+  ) ram_ins (
+    .clk_i   ( clk_i   ),
 
-  assign empty_o = ( usedw == 0         ) ? 1'b1 : 1'b0;
-  assign full_o  = ( usedw == 2**AWIDTH ) ? 1'b1 : 1'b0;
+    .data_i  ( data_i  ),
+
+    .rd_addr ( rd_addr ),
+    .wr_addr ( wr_addr ),
+
+    .wr_en   ( wr_en   ),
+    .rd_en   ( rd_en   ),
+
+    .data_o  ( q_o     )
+  );
+
+
     
 endmodule
