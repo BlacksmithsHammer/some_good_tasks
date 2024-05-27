@@ -35,8 +35,48 @@ module fifo #(
   logic  [AWIDTH:0]   usedw  = 0;
 
   generate
-    if( REGISTER_OUTPUT )
+    if( !REGISTER_OUTPUT && SHOWAHEAD )
+      begin
+        logic showed = 1'b0;
+        logic need_show;
+        logic last_showed;
 
+        assign last_showed = !wr_en && usedw == 1 && showed;
+        assign need_show = !showed && usedw == 1;
+        assign wr_en = (wrreq_i && usedw != 2**AWIDTH) ? 1'b1 : 1'b0;
+        assign rd_en = (rdreq_i && usedw != '0 && showed || need_show) && !last_showed ? 1'b1 : 1'b0;
+
+        
+        always_ff @( posedge clk_i )
+          if( wr_en )
+            wr_addr_reg <= wr_addr_reg + 1'b1;
+  
+        always_ff @( posedge clk_i )
+          if( rd_en )
+            rd_addr_reg <= rd_addr_reg + 1'b1;
+  
+        always_ff @( posedge clk_i )
+          if( rdreq_i && last_showed )
+            usedw <= '0;
+          else if( need_show )
+            usedw <= usedw + wr_en;
+          else
+            usedw <= usedw + wr_en - rd_en;
+
+        
+        always_ff @( posedge clk_i )
+          if( usedw == 0 )
+            showed <= 1'b0;
+          else
+            showed <= 1'b1;
+        
+        assign wr_addr = wr_addr_reg;
+        assign rd_addr = rd_addr_reg;
+        assign full_o  = ( usedw == 2**AWIDTH );
+        assign usedw_o = ( usedw );
+        assign empty_o = ( usedw == 0 || need_show);
+      end
+    else if( REGISTER_OUTPUT && !SHOWAHEAD)
       begin
         logic data_d = 0;
 
@@ -67,7 +107,7 @@ module fifo #(
         assign usedw_o = ( usedw + data_d );
         assign empty_o = ( usedw == 0 );
       end
-    else
+    else if (!REGISTER_OUTPUT && !SHOWAHEAD)
       begin
         assign wr_en = (wrreq_i && usedw != 2**AWIDTH) ? 1'b1 : 1'b0;
         assign rd_en = (rdreq_i && usedw != '0) ? 1'b1 : 1'b0;
@@ -81,11 +121,7 @@ module fifo #(
             rd_addr_reg <= rd_addr_reg + 1'b1;
   
         always_ff @( posedge clk_i )
-          if( wr_en && !rd_en )
-            usedw <= usedw + 1'b1;
-          else
-            if( !wr_en && rd_en )
-              usedw <= usedw - 1'b1;
+          usedw <= usedw + wr_en - rd_en;
         
         assign wr_addr = wr_addr_reg;
         assign rd_addr = rd_addr_reg;
