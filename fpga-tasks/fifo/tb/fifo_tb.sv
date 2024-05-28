@@ -3,13 +3,19 @@
 module fifo_tb #(
   parameter DWIDTH             = 8,
   parameter AWIDTH             = 4,
-  parameter SHOWAHEAD          = 1,
   parameter ALMOST_FULL_VALUE  = 12,
   parameter ALMOST_EMPTY_VALUE = 4,
-  parameter REGISTER_OUTPUT    = 0
+
+  //for DUT
+  parameter REGISTER_OUTPUT    = 1,
+  parameter SHOWAHEAD          = 0,
+
+  //for golden sample
+  parameter GOLDEN_REG         = "ON",
+  parameter GOLDEN_SHOW        = "OFF"
 );
 
-
+  //input signal for both models
   bit clk;
   bit srst;
 
@@ -17,9 +23,31 @@ module fifo_tb #(
   logic               wrreq;
   logic               rdreq;
 
+  //DUT output signals
+  logic               DUT_empty_o;
+  logic               DUT_full_o;
+  logic [AWIDTH:0]    DUT_usedw_o;
+
+  logic               DUT_almost_full_o;
+  logic               DUT_almost_empty_o;
+
+  logic [DWIDTH-1:0]  DUT_q_o;
+  
+  //golden model output signals
+  logic               GOLDEN_empty_o;
+  logic               GOLDEN_full_o;
+  logic [AWIDTH-1:0]    GOLDEN_usedw_o;
+
+  logic               GOLDEN_almost_full_o;
+  logic               GOLDEN_almost_empty_o;
+
+  logic [DWIDTH-1:0]  GOLDEN_q_o;
+
+
   initial
     forever
       #5 clk = !clk;
+
   default clocking cb
     @( posedge clk );
   endclocking
@@ -31,48 +59,23 @@ module fifo_tb #(
     .SHOWAHEAD          ( SHOWAHEAD          ),
     .ALMOST_FULL_VALUE  ( ALMOST_FULL_VALUE  ),
     .ALMOST_EMPTY_VALUE ( ALMOST_EMPTY_VALUE ),
-    .REGISTER_OUTPUT    ( 0                  )
+    .REGISTER_OUTPUT    ( REGISTER_OUTPUT    )
   ) DUT (
-    .clk_i  ( clk  ),
-    .srst_i ( srst ),
+    .clk_i          ( clk                ),
+    .srst_i         ( srst               ),
 
-    .data_i  ( data ),
-    .wrreq_i ( wrreq ),
-    .rdreq_i ( rdreq ),
-  
-    .q_o (),
+    .data_i         ( data               ),
+    .wrreq_i        ( wrreq              ),
+    .rdreq_i        ( rdreq              ),
 
-    .empty_o (),
-    .full_o  (),
-    .usedw_o (),
+    .empty_o        ( DUT_empty_o        ),
+    .full_o         ( DUT_full_o         ),
+    .usedw_o        ( DUT_usedw_o        ),
 
-    .almost_full_o  (),
-    .almost_empty_o ()
-  );
+    .almost_full_o  ( DUT_almost_full_o  ),
+    .almost_empty_o ( DUT_almost_empty_o ),
 
-  fifo #(
-    .DWIDTH             ( DWIDTH             ),
-    .AWIDTH             ( AWIDTH             ),
-    .SHOWAHEAD          ( SHOWAHEAD          ),
-    .ALMOST_FULL_VALUE  ( ALMOST_FULL_VALUE  ),
-    .ALMOST_EMPTY_VALUE ( ALMOST_EMPTY_VALUE ),
-    .REGISTER_OUTPUT    ( 1                  )
-  ) DUT_reg (
-    .clk_i  ( clk  ),
-    .srst_i ( srst ),
-
-    .data_i  ( data ),
-    .wrreq_i ( wrreq ),
-    .rdreq_i ( rdreq ),
-  
-    .q_o (),
-
-    .empty_o (),
-    .full_o  (),
-    .usedw_o (),
-
-    .almost_full_o  (),
-    .almost_empty_o ()
+    .q_o            ( DUT_q_o            )
   );
 
   scfifo #(
@@ -92,143 +95,57 @@ module fifo_tb #(
     .enable_ecc              ( "FALSE"               ),
 
 
-    .lpm_showahead           ( "OFF"                 ),
-    .add_ram_output_register ( "OFF"                 )
-  ) golden (
-    .clock  ( clk  ),
-    .sclr ( srst ),
+    .lpm_showahead           ( GOLDEN_SHOW           ),
+    .add_ram_output_register ( GOLDEN_REG            )
+  ) GOLDEN (
+    .clock        ( clk                   ),
+    .sclr         ( srst                  ),
 
-    .data  ( data ),
-    .wrreq ( wrreq ),
-    .rdreq ( rdreq ),
-  
-    .q (),
+    .data         ( data                  ),
+    .wrreq        ( wrreq                 ),
+    .rdreq        ( rdreq                 ),
 
-    .empty (),
-    .full  (),
-    .usedw (),
+    .empty        ( GOLDEN_empty_o        ),
+    .full         ( GOLDEN_full_o         ),
+    .usedw        ( GOLDEN_usedw_o        ),
 
-    .almost_full  (),
-    .almost_empty ()
-  );
+    .almost_full  ( GOLDEN_almost_full_o  ),
+    .almost_empty ( GOLDEN_almost_empty_o ),
 
-  scfifo #(
-    .lpm_width               ( DWIDTH                ),
-    .lpm_widthu              ( AWIDTH                ),
-    .lpm_numwords            ( 2 ** AWIDTH           ),
-    .lpm_type                ( "scfifo"              ),
-    .lpm_hint                ( "RAM_BLOCK_TYPE=M10K" ),
-    .intended_device_family  ( "Cyclone V"           ),
-    .underflow_checking      ( "ON"                  ),
-    .overflow_checking       ( "ON"                  ),
-    .allow_rwcycle_when_full ( "OFF"                 ),
-    .use_eab                 ( "ON"                  ),
-    .almost_full_value       ( ALMOST_FULL_VALUE     ),
-    .almost_empty_value      ( ALMOST_EMPTY_VALUE    ),
-    .maximum_depth           ( 0                     ),
-    .enable_ecc              ( "FALSE"               ),
-
-
-    .lpm_showahead           ( "ON"                  ),
-    .add_ram_output_register ( "OFF"                 )
-  ) golden_show (
-    .clock  ( clk  ),
-    .sclr ( srst ),
-
-    .data  ( data ),
-    .wrreq ( wrreq ),
-    .rdreq ( rdreq ),
-  
-    .q (),
-
-    .empty (),
-    .full  (),
-    .usedw (),
-
-    .almost_full  (),
-    .almost_empty ()
-  );
-
-
-  scfifo #(
-    .lpm_width               ( DWIDTH                ),
-    .lpm_widthu              ( AWIDTH                ),
-    .lpm_numwords            ( 2 ** AWIDTH           ),
-    .lpm_type                ( "scfifo"              ),
-    .lpm_hint                ( "RAM_BLOCK_TYPE=M10K" ),
-    .intended_device_family  ( "Cyclone V"           ),
-    .underflow_checking      ( "ON"                  ),
-    .overflow_checking       ( "ON"                  ),
-    .allow_rwcycle_when_full ( "OFF"                 ),
-    .use_eab                 ( "ON"                  ),
-    .almost_full_value       ( ALMOST_FULL_VALUE     ),
-    .almost_empty_value      ( ALMOST_EMPTY_VALUE    ),
-    .maximum_depth           ( 0                     ),
-    .enable_ecc              ( "FALSE"               ),
-
-
-    .lpm_showahead           ( "OFF"                 ),
-    .add_ram_output_register ( "ON"                  )
-  ) golden_reg (
-    .clock  ( clk  ),
-    .sclr ( srst ),
-
-    .data  ( data ),
-    .wrreq ( wrreq ),
-    .rdreq ( rdreq ),
-  
-    .q (),
-
-    .empty (),
-    .full  (),
-    .usedw (),
-
-    .almost_full  (),
-    .almost_empty ()
+    .q            ( GOLDEN_q_o            )
   );
 
 
 
+  task throw_err(string msg);
+    $display(msg, $time);
+    ##5;
+    $stop();
+  endtask
 
+  int end_compare_check = 0;
 
-  scfifo #(
-    .lpm_width               ( DWIDTH                ),
-    .lpm_widthu              ( AWIDTH                ),
-    .lpm_numwords            ( 2 ** AWIDTH           ),
-    .lpm_type                ( "scfifo"              ),
-    .lpm_hint                ( "RAM_BLOCK_TYPE=M10K" ),
-    .intended_device_family  ( "Cyclone V"           ),
-    .underflow_checking      ( "ON"                  ),
-    .overflow_checking       ( "ON"                  ),
-    .allow_rwcycle_when_full ( "OFF"                 ),
-    .use_eab                 ( "ON"                  ),
-    .almost_full_value       ( ALMOST_FULL_VALUE     ),
-    .almost_empty_value      ( ALMOST_EMPTY_VALUE    ),
-    .maximum_depth           ( 0                     ),
-    .enable_ecc              ( "FALSE"               ),
-
-
-    .lpm_showahead           ( "ON"                  ),
-    .add_ram_output_register ( "ON"                  )
-  ) golden_show_reg (
-    .clock  ( clk  ),
-    .sclr ( srst ),
-
-    .data  ( data ),
-    .wrreq ( wrreq ),
-    .rdreq ( rdreq ),
-  
-    .q (),
-
-    .empty (),
-    .full  (),
-    .usedw (),
-
-    .almost_full  (),
-    .almost_empty ()
-  );
-
-
+  task compare_signals(string test_name);
+    $display(test_name, " started at:", $time);
+    end_compare_check = 1;
+    while ( end_compare_check != 0 ) 
+      begin
+        if( DUT_empty_o        !== GOLDEN_empty_o        ) 
+          throw_err("Wrong empty_o");
+        if( DUT_full_o         !== GOLDEN_full_o         ) 
+          throw_err("Wrong full_o");
+        if( DUT_usedw_o        !== {GOLDEN_full_o, GOLDEN_usedw_o}) 
+          throw_err("Wrong usedw_o");
+        if( DUT_almost_full_o  !== GOLDEN_almost_full_o  ) 
+          throw_err("Wrong almost_full_o");
+        if( DUT_almost_empty_o !== GOLDEN_almost_empty_o ) 
+          throw_err("Wrong almost_empty_o");
+        if( DUT_q_o            !=  GOLDEN_q_o            ) 
+          throw_err("Wrong q_o");
+        ##1;
+      end
+    $display(test_name, " end at:", $time);
+  endtask
 
   task send_req(logic [DWIDTH-1:0]  req_data);
     data  = req_data;
@@ -236,17 +153,52 @@ module fifo_tb #(
     ##1;
     wrreq = 1'b0;
   endtask
-  
+
+  task long_stress_test(int iterations);
+    while( iterations > 0 )
+      begin
+        if($urandom_range(2**DWIDTH-1, 0) % 2 == 0)
+          send_req($urandom_range(2**DWIDTH-1, 0));
+
+        if($urandom_range(2**DWIDTH-1, 0) % 2 == 0)
+          rdreq = !rdreq;
+
+        iterations = iterations - 1;
+        ##1;
+      end
+
+    end_compare_check = 0;
+  endtask
 
   initial
     begin
       //reset
       srst = 1'b1;
+      wrreq = 1'b0;
+      rdreq = 1'b0;
       ##1;
       srst = 1'b0;
-      ##5;
+      ##1;
       //end reset
 
+      
+      fork
+        compare_signals("Old big test...");
+        old_big_test();
+      join
+
+      fork
+        compare_signals("Stress test...");
+        long_stress_test(100000);
+      join
+      
+
+      $display("ALL TESTS PASSED SUCCESSFULLY!");
+      $stop();
+    end
+
+  // this is old big combined test... :)
+  task old_big_test();
       rdreq = 1'b0;
       for(int i = 0; i < 16; i++)
         begin
@@ -298,13 +250,31 @@ module fifo_tb #(
       for(int i = 0; i < 2**AWIDTH; i++)
         send_req($urandom_range(2**DWIDTH-1, 0));
       rdreq = 1'b1;
-      ##4;
-      wrreq = 1'b1;
       ##20;
 
-      
-      $stop();
-    end
 
+      wrreq = 1'b0;
+      rdreq = 1'b0;
+      for(int i = 0; i < 2**AWIDTH; i++)
+        send_req($urandom_range(2**DWIDTH-1, 0));
+
+      ##4;
+
+      for(int i = 0; i < 100; i++)
+        begin
+          rdreq = $urandom_range(1, 0);
+          ##1;
+        end
+      
+      rdreq = 1'b0;
+      wrreq = 1'b0;
+      ##4;
+      send_req($urandom_range(2**DWIDTH-1, 0));
+      rdreq = 1'b1;
+      ##2;
+      rdreq = 1'b0;
+      ##5;
+      end_compare_check = 0;
+  endtask
 
 endmodule
