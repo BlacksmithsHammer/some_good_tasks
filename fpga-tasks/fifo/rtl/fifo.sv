@@ -23,6 +23,11 @@ module fifo #(
   output logic [DWIDTH-1:0]  q_o
 );
 
+  logic have_words_in_mem;
+  logic data_in_mem;
+
+
+
   logic  [AWIDTH-1:0] rd_addr;
   logic  [AWIDTH-1:0] wr_addr;
 
@@ -48,86 +53,67 @@ module fifo #(
       if( rd_en )
         rd_addr_reg <= rd_addr_reg + 1'b1;
 
+  assign have_words_in_mem = ( usedw > 1 );
+
+  always @( posedge clk_i )
+    if( srst_i )
+      data_in_mem <= 1'b0;
+    else
+      if( wr_en )
+        data_in_mem <= 1'b1;
+      else
+        if( rd_en )
+          data_in_mem <= have_words_in_mem;
+  
+  always_ff @( posedge clk_i )
+    if( srst_i )
+      usedw <= '0;
+    else
+      usedw <= usedw_o + wr_en - rd_en;
+
+  // output assignments
   assign almost_full_o  = usedw_o >=  ALMOST_FULL_VALUE;
   assign almost_empty_o = usedw_o < ALMOST_EMPTY_VALUE;
 
+  assign usedw_o = usedw;
+  
+  assign full_o  = usedw[AWIDTH];
 
   generate
     if( !REGISTER_OUTPUT && SHOWAHEAD )
       begin
-        logic showed = 1'b0;
-        logic need_show;
-        logic last_showed;
 
-        assign last_showed = usedw == 1 && showed;
-        assign need_show   = !showed && usedw == 1;
-        
-        assign wr_en = wrreq_i && !full_o;
-        assign rd_en = (rdreq_i && usedw != '0 && showed || need_show) && !last_showed;
-  
-        always_ff @( posedge clk_i )
-          if( srst_i )
-            usedw <= '0;
-          else if( need_show )
-            usedw <= usedw + wr_en;
-          else if( rdreq_i && last_showed )
-            begin
-              usedw <= '0;
-              $display($time);
-            end
-          else
-            usedw <= usedw + wr_en - rd_en;
-
-        always_ff @( posedge clk_i )
-          showed <= |usedw;
-        
-        assign wr_addr = wr_addr_reg;
-        assign rd_addr = rd_addr_reg;
-        assign full_o  = usedw[AWIDTH];
-        assign usedw_o = usedw;
-        assign empty_o = ( usedw == 0 || need_show);
       end
-    else if( REGISTER_OUTPUT && !SHOWAHEAD)
+    else if( REGISTER_OUTPUT && !SHOWAHEAD )
       begin
-        logic data_d;
+        logic data_in_reg;
 
-        assign wr_en = ( wrreq_i && !usedw_o[AWIDTH] );
-        assign rd_en = ( rdreq_i && usedw != 0 );
-
-        always_ff @( posedge clk_i )
-          if( srst_i )
-            data_d <= 1'b0;
-          else
-            data_d <= wr_en;
+        assign wr_en = ( wrreq_i && !usedw[AWIDTH] );
+        assign rd_en = ( rdreq_i && data_in_reg );
 
         always_ff @( posedge clk_i )
           if( srst_i )
-            usedw <= '0;
+            data_in_reg <= 1'b0;
           else
-            usedw <= usedw_o - rd_en;
+            if( rd_en && !have_words_in_mem )
+              data_in_reg <= 1'b0;
+            else
+              data_in_reg <= data_in_mem;
 
         assign wr_addr = wr_addr_reg;
         assign rd_addr = ( usedw != 0 && rd_en ) ? rd_addr_reg + 1'b1 : rd_addr_reg ;
-        assign full_o  = usedw_o[AWIDTH];
-        assign usedw_o = ( usedw + data_d );
-        assign empty_o = ( usedw == 0 );
+
+        assign empty_o = !data_in_reg;
       end
-    else if (!REGISTER_OUTPUT && !SHOWAHEAD)
+    else if ( !REGISTER_OUTPUT && !SHOWAHEAD )
       begin
         assign wr_en = wrreq_i && !full_o;
-        assign rd_en = rdreq_i && !empty_o;
+        assign rd_en = rdreq_i && data_in_mem;
 
-        always_ff @( posedge clk_i )
-          if( srst_i )
-            usedw <= '0;
-          else 
-            usedw <= usedw + wr_en - rd_en;
-        
         assign wr_addr = wr_addr_reg;
         assign rd_addr = rd_addr_reg;
-        assign full_o  = usedw[AWIDTH];
-        assign usedw_o = usedw;
-        assign empty_o = ( usedw == 0 );
+
+        assign empty_o = !data_in_mem;
       end
 
   endgenerate
