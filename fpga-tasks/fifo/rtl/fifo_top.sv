@@ -1,7 +1,7 @@
 module fifo_top #(
   parameter DWIDTH             = 64,
-  parameter AWIDTH             = 10,
-  parameter SHOWAHEAD          = 0,
+  parameter AWIDTH             = 12,
+  parameter SHOWAHEAD          = 1,
   parameter ALMOST_FULL_VALUE  = 12,
   parameter ALMOST_EMPTY_VALUE = 2,
   parameter REGISTER_OUTPUT    = 1

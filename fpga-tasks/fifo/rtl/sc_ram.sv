@@ -34,9 +34,7 @@ module sc_ram #(
 		      if( rd_en )
 		        data_o <= data_reg;
       end
-
     else
-
       begin
         always_ff @(posedge clk_i)
           if( wr_en )
