@@ -13,10 +13,10 @@ if [batch_mode] {
   onbreak {
     if { [coverage attribute -name TESTSTATUS -concise] > 1 } { 
       echo_err "Have erros in test!"
-      if [batch_mode] { quit -f -code 2 } 
-    }   
-    resume
+      quit -f -code 2
+    }
   }
+
   #vsim -wlf none 
   #check every mode
   vsim -do "run -all" -gREGISTER_OUTPUT=0 -gSHOWAHEAD=0 fifo_tb
