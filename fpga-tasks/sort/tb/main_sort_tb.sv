@@ -11,7 +11,6 @@ module main_sort_tb #(
       #5 clk = !clk;
 
 
-
   default clocking cb
     @( posedge clk );
   endclocking
@@ -102,14 +101,20 @@ module main_sort_tb #(
       srst <= 1'b0;
 
       send_packet(2, 100);
-      ##100;
+      ##150;
 
       srst <= 1'b1;
       ##1;
       srst <= 1'b0;
       ##1;
       send_packet(10, 50);
-      ##100;
+      ##120;
+
+      send_packet(10, 50);
+      ##120;
+
+      send_packet(3, 50);
+      ##40;
 
       $stop();
     end

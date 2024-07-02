@@ -1,6 +1,6 @@
 module main_sort #(
-    parameter DWIDTH      = 8,
-    parameter MAX_PKT_LEN = 16
+    parameter DWIDTH      = 32,
+    parameter MAX_PKT_LEN = 32
 )(
   input   clk_i,
   input   srst_i,
@@ -112,8 +112,8 @@ module main_sort #(
   assign src_data_o  = ram_q_a;
   assign snk_ready_o = ( state < SORT_S );
   assign src_valid_o = ( state > SORT_S ) || src_valid_d;
-  assign src_startofpacket_o = ( state > SORT_S ) && ~src_valid_d;
-  assign src_endofpacket_o   = ~( state > SORT_S ) && src_valid_d;
+  assign src_startofpacket_o =  ( state > SORT_S ) && ~src_valid_d;
+  assign src_endofpacket_o   = ~( state > SORT_S ) &&  src_valid_d;
 
   logic  start_sorting;
   assign start_sorting = ( state == WAIT_ENDPACKET_S && next_state == SORT_S );
