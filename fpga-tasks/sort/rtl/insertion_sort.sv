@@ -1,3 +1,12 @@
+///////////////////////////////////////////////////////////////////////////
+// main idea: Find 1st max/min element, swap it into 1st position.
+// Find 2nd max/min, swap it into 2nd position etc.
+//
+// During the search uses a tmp register j_value to save value
+// and j_swap_d[2] - register to save index of element to swap.
+// j_swap_d[1:0] - dff registers if indexes, because uses registered ram
+///////////////////////////////////////////////////////////////////////////
+
 module insertion_sort #(
   parameter DWIDTH      = 8,
   parameter MAX_PKT_LEN = 16
@@ -31,30 +40,28 @@ module insertion_sort #(
   // j_value     - saved value of max or min to swap
   logic [2:0][$clog2(MAX_PKT_LEN)-1:0] j_swap_d;
   logic [(DWIDTH-1):0]                 j_value;
-
+  // registered ram outputs
   logic [(DWIDTH-1):0] q_a_i_reg;
   logic [(DWIDTH-1):0] q_b_i_reg;
 
   logic need_swap;
-  assign need_swap = ( j_swap_d[0] != i ) && ( j_value > q_b_i_reg );
+  // change [j_value (>) q_b_i_reg] this comparator
+  // to change sort condition
+  assign need_swap = ( j_swap_d[0] != i ) && ( j_value < q_b_i_reg );
 
   always_ff @( posedge clk_i )
-    if( j_swap_d[0] == i + 1'b1 && j_swap_d[1] == i )//i + 1'b1 == j && i + 1'b1 != last_addr )
+    if( j_swap_d[0] == i + 1'b1 && j_swap_d[1] == i )
       j_value <= q_a_i;
     else
       if( need_swap )
         j_value <= q_b_i_reg;
       
-
   always_ff @( posedge clk_i )
     if( srst_i )
       change_i_d <= '0;
     else
       if( change_i_d[2] )
-        begin
-          $display("change at %6d", $time);
           change_i_d <= '0;
-        end
       else
         if( sort_state )
           change_i_d <= {change_i_d[1:0], j == last_addr};
@@ -74,22 +81,6 @@ module insertion_sort #(
             if( need_swap )
               j_swap_d[2] <= j_swap_d[1];
           end
-  
-  always_ff @( posedge clk_i )
-    if( srst_i )
-      start_sort_d <= '0;
-    else
-      start_sort_d <= {start_sort_d[0], start_sorting_i};
-  
-  always_ff @( posedge clk_i )
-    if( srst_i )
-      sort_state <= 1'b0;
-    else
-      if( start_sort_d[1] )
-        sort_state <= 1'b1;
-      else
-        if( i == last_addr - 1 && change_i_d[2])
-          sort_state <= 1'b0;
 
   always_ff @( posedge clk_i )
     if( srst_i )
@@ -117,6 +108,29 @@ module insertion_sort #(
             // but need add into if one new condition
               j <= i + 1'b1; 
 
+  ///////////////////////////////////////////////////////////////////////////
+  // change flags of module state
+  ///////////////////////////////////////////////////////////////////////////
+  always_ff @( posedge clk_i )
+    if( srst_i )
+      start_sort_d <= '0;
+    else
+      start_sort_d <= {start_sort_d[0], start_sorting_i};
+  
+  always_ff @( posedge clk_i )
+    if( srst_i )
+      sort_state <= 1'b0;
+    else
+      if( start_sort_d[1] )
+        sort_state <= 1'b1;
+      else
+        if( i == last_addr - 1 && change_i_d[2])
+          sort_state <= 1'b0;
+
+  assign end_sorting_o = ~(sort_state || |start_sort_d);
+  ///////////////////////////////////////////////
+  // RAM control
+  ///////////////////////////////////////////////
   always_ff @( posedge clk_i )
     if( srst_i )
       q_a_i_reg <= '0;
@@ -130,10 +144,6 @@ module insertion_sort #(
     else
       q_b_i_reg <= q_b_i;
 
-
-  ///////////////////////////////////////////////
-  // RAM control
-  ///////////////////////////////////////////////
   assign we_a_o = change_i_d[2];
   assign we_b_o = change_i_d[2];
 
@@ -142,11 +152,6 @@ module insertion_sort #(
 
   assign addr_a_o = i;
   assign addr_b_o = change_i_d[2] ? j_swap_d[2] : j ;
-
-  ///////////////////////////////////////////////
-  // output state
-  ///////////////////////////////////////////////
-  assign end_sorting_o = ~(sort_state || |start_sort_d);
   
 endmodule
 

@@ -10,11 +10,10 @@ module main_sort_tb #(
     forever
       #5 clk = !clk;
 
-
   default clocking cb
     @( posedge clk );
   endclocking
-  
+  // dut interface
   logic   [DWIDTH-1:0] dut_snk_data;
   logic                dut_snk_startofpacket;
   logic                dut_snk_endofpacket;
@@ -47,11 +46,14 @@ module main_sort_tb #(
     .src_ready_i         ( dut_src_ready         )
   );
   
+
   task throw_err(string msg);
     $error(msg, $time);
     ##5;
     $stop();
   endtask
+
+  //sorted_data 
 
   // len_pkt - number of words in packet
   task send_packet(int len_pkt = MAX_PKT_LEN,
@@ -69,11 +71,9 @@ module main_sort_tb #(
         if( $urandom_range(99, 0) < chance_of_send_valid )
           begin
             i = i + 1;
-            dut_snk_valid <= 1'b1;
-            if ( i == 1 ) 
-              dut_snk_startofpacket <= 1'b1;
-            if ( i == len_pkt ) 
-              dut_snk_endofpacket   <= 1'b1;
+            dut_snk_valid         <= 1'b1;
+            dut_snk_startofpacket <= ( i == 1       );
+            dut_snk_endofpacket   <= ( i == len_pkt );
           end
         else
           dut_snk_valid <= 1'b0;
@@ -95,26 +95,19 @@ module main_sort_tb #(
       dut_snk_endofpacket   <= 1'b0;
       dut_snk_valid         <= 1'b0;
       dut_src_ready = 1'b1;
-      
       srst <= 1'b1;
       ##1;
       srst <= 1'b0;
-
+      ##1;
+      
       send_packet(2, 100);
+      ##20
+      
+      send_packet(10, 50);
       ##150;
 
-      srst <= 1'b1;
-      ##1;
-      srst <= 1'b0;
-      ##1;
       send_packet(10, 50);
-      ##120;
-
-      send_packet(10, 50);
-      ##120;
-
-      send_packet(3, 50);
-      ##40;
+      ##150;
 
       $stop();
     end
