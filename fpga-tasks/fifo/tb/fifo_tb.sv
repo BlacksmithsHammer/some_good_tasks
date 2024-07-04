@@ -207,8 +207,10 @@ module fifo_tb #(
 
   initial
     begin
-      $display("---------------------------------------------------------------\nTESTS FOR SHOWAHEAD=%0d and REGISTER_OUTPUT=%0d STARTED\n---------------------------------------------------------------",
-                SHOWAHEAD, REGISTER_OUTPUT);
+      $display("---------------------------------------------------------------\n");
+      $display("TESTS FOR SHOWAHEAD=%0d and REGISTER_OUTPUT=%0d STARTED\n", SHOWAHEAD, REGISTER_OUTPUT);
+      $display("---------------------------------------------------------------\n");
+
       //reset
       srst = 1'b1;
       wrreq = 1'b0;
