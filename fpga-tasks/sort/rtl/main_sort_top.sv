@@ -1,6 +1,6 @@
 module main_sort_top #(
     parameter DWIDTH      = 32,
-    parameter MAX_PKT_LEN = 256
+    parameter MAX_PKT_LEN = 128
 )(
   input                clk_i_top,
   input                srst_i_top,

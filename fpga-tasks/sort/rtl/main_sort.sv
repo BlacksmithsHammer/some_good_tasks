@@ -39,7 +39,7 @@ module main_sort #(
       if( next_state == WAIT_ENDPACKET_S && snk_valid_i )
         stream_addr_a_reg <= stream_addr_a_reg + 1'b1;
       else
-        if( next_state > SORT_S )
+        if( next_state == SEND_STARTPACKET_S || next_state == SEND_ENDPACKET_S )
           if( stream_addr_a_reg != 0 )
             stream_addr_a_reg <= stream_addr_a_reg - 1'b1;
         
@@ -107,13 +107,16 @@ module main_sort #(
   // MAIN STATE MACHINE FOR AVALON-ST
   ///////////////////////////////////////////////
   // output data
-  logic src_valid_d;
 
+  logic state_after_sort;
+  assign state_after_sort = ( state == SEND_STARTPACKET_S ) || ( state == SEND_ENDPACKET_S );
+
+  logic src_valid_d;
   assign src_data_o  = ram_q_a;
-  assign snk_ready_o = ( state < SORT_S );
-  assign src_valid_o = ( state > SORT_S ) || src_valid_d;
-  assign src_startofpacket_o =  ( state > SORT_S ) && ~src_valid_d;
-  assign src_endofpacket_o   = ~( state > SORT_S ) &&  src_valid_d;
+  assign snk_ready_o = state == WAIT_STARTPACKET_S || state == WAIT_ENDPACKET_S;
+  assign src_valid_o = state_after_sort || src_valid_d;
+  assign src_startofpacket_o =  state_after_sort && ~src_valid_d;
+  assign src_endofpacket_o   = ~state_after_sort &&  src_valid_d;
 
   logic  start_sorting;
   assign start_sorting = ( state == WAIT_ENDPACKET_S && next_state == SORT_S );
@@ -122,7 +125,7 @@ module main_sort #(
     if( srst_i )
       src_valid_d <= 1'b0;
     else
-      src_valid_d <= ( state > SORT_S );
+      src_valid_d <= state_after_sort;
 
   always_ff @( posedge clk_i )
     if( srst_i )
@@ -138,16 +141,12 @@ module main_sort #(
           begin
             if( snk_valid_i && snk_startofpacket_i )
               next_state = WAIT_ENDPACKET_S;
-            else
-              next_state = WAIT_STARTPACKET_S;
           end
 
         WAIT_ENDPACKET_S:
           begin
             if( snk_valid_i && snk_endofpacket_i )
               next_state = SORT_S;
-            else
-              next_state = WAIT_ENDPACKET_S;
           end
 
         SORT_S:
@@ -157,21 +156,17 @@ module main_sort #(
             else 
               if( end_sorting )
                 next_state = SEND_STARTPACKET_S;
-              else
-                next_state = SORT_S;
           end
 
         SEND_STARTPACKET_S:
           begin
             if( stream_addr_a_reg == 1 )
               next_state = SEND_ENDPACKET_S;
-            else
-              next_state = SEND_STARTPACKET_S;
           end
 
         SEND_ENDPACKET_S:
           begin
-              next_state = WAIT_STARTPACKET_S;
+            next_state = WAIT_STARTPACKET_S;
           end
 
         default:

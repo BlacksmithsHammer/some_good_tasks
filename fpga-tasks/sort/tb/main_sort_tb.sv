@@ -53,13 +53,19 @@ module main_sort_tb #(
     $stop();
   endtask
 
-  //sorted_data 
+  // global data and states for checker
+  // DWIDTH without (-1) to skip sign bit in sort
+  logic unsigned [DWIDTH-1:0] sorted_data[]; 
+  int data_in_process;
 
   // len_pkt - number of words in packet
   task send_packet(int len_pkt = MAX_PKT_LEN,
                    int chance_of_send_valid = 100);
     int i;
     i = 0;
+    sorted_data = new[len_pkt];
+    data_in_process = 1;
+
     if( len_pkt > MAX_PKT_LEN || len_pkt < 2 )
       throw_err("WRONG LENGTH OF PACKET IN TASK SEND_PACKET IN TIME");
     if( chance_of_send_valid < 1 || chance_of_send_valid > 100 )
@@ -67,7 +73,8 @@ module main_sort_tb #(
 
     while( i < len_pkt )
       begin
-        dut_snk_data <= $urandom_range(2**32-1, 0);
+        sorted_data[i][DWIDTH-1:0]  = $urandom_range(2**32-1, 0);
+        dut_snk_data   <= sorted_data[i];
         if( $urandom_range(99, 0) < chance_of_send_valid )
           begin
             i = i + 1;
@@ -81,12 +88,55 @@ module main_sort_tb #(
         dut_snk_startofpacket <= 1'b0;
         dut_snk_endofpacket   <= 1'b0;
       end
+    
+    sorted_data.sort(); 
+    // $display("=====================================================");
+    // for (int j = 0; j < sorted_data.size(); j++)
+    //   $write("%d[%0d] ", sorted_data[j], j);
+    // $write("\n");
 
     // clean signals
     dut_snk_startofpacket <= 1'b0;
     dut_snk_endofpacket   <= 1'b0;
     dut_snk_valid         <= 1'b0;
-  endtask 
+  endtask
+  
+  // time of waiting answer in clocks/cycles
+  task check_task(longint time_waiting = 10000);
+    int i;
+    i = 0;
+    // check of x (isunknown) skipped, because uses
+    // timer-like counter time_waiting to check infinite
+    // sorting and some other situations
+    while( i < sorted_data.size() )
+      begin
+        time_waiting = time_waiting - 1;
+        if( dut_src_valid === 1'b1 )
+          begin
+            
+            //$display("%5d, %5d, %8d", dut_src_data, sorted_data[i], $time);
+            if( ( i == 0 ) && 
+                ( dut_src_endofpacket === 1'b1 || dut_src_startofpacket === 1'b0 ) )
+              throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE START OF SENDING PACKET");
+
+            if( ( i == sorted_data.size() - 1 ) && 
+                ( dut_src_endofpacket === 1'b0 || dut_src_startofpacket === 1'b1 ) )
+              throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE END OF SENDING PACKET");
+
+            if( ( i > 0 && i < i == sorted_data.size() - 1 ) &&
+                ( dut_src_endofpacket === 1'b1 || dut_src_startofpacket === 1'b1 ) )
+              throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE MIDDLE OF SENDING PACKET");
+            if( dut_src_data != sorted_data[i] )
+              throw_err("WRONG DATA");
+            
+            i = i + 1;
+          end
+        ##1;
+        if( time_waiting < 0 )
+          throw_err("TEST TOO LONG");
+      end
+    wait(dut_snk_ready);
+  endtask
 
 
   initial
@@ -100,15 +150,33 @@ module main_sort_tb #(
       srst <= 1'b0;
       ##1;
       
-      send_packet(2, 100);
-      ##20
+      // stress-test
+      for(int curr_len_pkt = 2; curr_len_pkt <= MAX_PKT_LEN; curr_len_pkt++)
+        for(int curr_chance = 5; curr_chance <= 100; curr_chance += 5)
+          for(int num_test = 0; num_test < 100; num_test++)
+            begin
+              fork
+                send_packet(curr_len_pkt, curr_chance);
+                check_task();
+              join
+              // not necessary move, only for checking problems
+              // in idle
+              ##($urandom_range(10, 0));
+            end
       
-      send_packet(10, 50);
-      ##150;
-
-      send_packet(10, 50);
-      ##150;
-
+      // tests with randomized length of packets
+      // and randomized time of sending packets into sort
+      for(int num_test = 0; num_test < 1000; num_test++)
+        begin
+          fork
+            send_packet($urandom_range(MAX_PKT_LEN, 2), $urandom_range(100, 1));
+            check_task();
+          join
+          // not necessary move, only for checking problems
+          // in idle/effect of pause
+          ##($urandom_range(10, 0));
+        end
+      //$display("TESTS PASSED SUCCESSFULLY FOR DWIDTH=%0d and MAX_PKT_LEN=%0d", DWIDTH, MAX_PKT_LEN);
       $stop();
     end
 

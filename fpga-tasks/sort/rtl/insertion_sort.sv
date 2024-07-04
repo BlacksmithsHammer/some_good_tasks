@@ -61,7 +61,7 @@ module insertion_sort #(
       change_i_d <= '0;
     else
       if( change_i_d[2] )
-          change_i_d <= '0;
+        change_i_d <= '0;
       else
         if( sort_state )
           change_i_d <= {change_i_d[1:0], j == last_addr};
