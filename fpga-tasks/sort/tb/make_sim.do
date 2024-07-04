@@ -1,9 +1,11 @@
 vlib work
 
 if [batch_mode] { onerror { quit -f -code 2 } }
+
 vlog -sv ../rtl/main_sort.sv
 vlog -sv ../rtl/true_dual_port_scram.sv
 vlog -sv ../rtl/insertion_sort.sv
+vlog -sv sort_avst_if.sv
 vlog -sv main_sort_tb.sv
 
 set PARAM_LIST { " " }
@@ -16,11 +18,12 @@ if [batch_mode] {
     "-gDWIDTH=32 -gMAX_PKT_LEN=8"
     "-gDWIDTH=32 -gMAX_PKT_LEN=16"
   }
-} else {
-  set PARAM_LIST {
-    "-gDWIDTH=8 -gMAX_PKT_LEN=16"
-  }
 }
+# else {
+#   set PARAM_LIST {
+#     "-gDWIDTH=16 -gMAX_PKT_LEN=32"
+#   }
+# }
 
 foreach params $PARAM_LIST {
 

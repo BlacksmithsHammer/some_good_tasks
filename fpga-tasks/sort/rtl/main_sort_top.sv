@@ -34,20 +34,20 @@ module main_sort_top #(
     .DWIDTH      ( DWIDTH      ),
     .MAX_PKT_LEN ( MAX_PKT_LEN )
   ) main_sort_ins (
-    .clk_i               ( clk_i_top  ),
-    .srst_i              ( srst_i_top ),
+    .clk_i               ( clk_i_top         ),
+    .srst_i              ( srst_i_top        ),
 
-    .snk_data_i          ( snk_data ),
+    .snk_data_i          ( snk_data          ),
     .snk_startofpacket_i ( snk_startofpacket ),
-    .snk_endofpacket_i   ( snk_endofpacket ),
-    .snk_valid_i         ( snk_valid ),
-    .snk_ready_o         ( snk_ready ),
+    .snk_endofpacket_i   ( snk_endofpacket   ),
+    .snk_valid_i         ( snk_valid         ),
+    .snk_ready_o         ( snk_ready         ),
 
-    .src_data_o          ( src_data ),
+    .src_data_o          ( src_data          ),
     .src_startofpacket_o ( src_startofpacket ),
-    .src_endofpacket_o   ( src_endofpacket ),
-    .src_valid_o         ( src_valid ),
-    .src_ready_i         ( src_ready )
+    .src_endofpacket_o   ( src_endofpacket   ),
+    .src_valid_o         ( src_valid         ),
+    .src_ready_i         ( src_ready         )
   );
 
 

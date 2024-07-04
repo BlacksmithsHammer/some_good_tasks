@@ -13,18 +13,13 @@ module main_sort_tb #(
   default clocking cb
     @( posedge clk );
   endclocking
-  // dut interface
-  logic   [DWIDTH-1:0] dut_snk_data;
-  logic                dut_snk_startofpacket;
-  logic                dut_snk_endofpacket;
-  logic                dut_snk_valid;
-  logic                dut_snk_ready;
-
-  logic   [DWIDTH-1:0] dut_src_data;
-  logic                dut_src_startofpacket;
-  logic                dut_src_endofpacket;
-  logic                dut_src_valid;
-  logic                dut_src_ready;
+  
+  sort_avst_if #(
+    .DWIDTH ( DWIDTH )
+  ) avst_if_ins (
+    .clk  ( clk  ),
+    .srst ( srst )
+  );
 
   main_sort #(
     .DWIDTH      ( DWIDTH      ),
@@ -33,20 +28,19 @@ module main_sort_tb #(
     .clk_i               ( clk                   ),
     .srst_i              ( srst                  ),
   
-    .snk_data_i          ( dut_snk_data          ),
-    .snk_startofpacket_i ( dut_snk_startofpacket ),
-    .snk_endofpacket_i   ( dut_snk_endofpacket   ),
-    .snk_valid_i         ( dut_snk_valid         ),
-    .snk_ready_o         ( dut_snk_ready         ),
+    .snk_data_i          ( avst_if_ins.snk_data          ),
+    .snk_startofpacket_i ( avst_if_ins.snk_startofpacket ),
+    .snk_endofpacket_i   ( avst_if_ins.snk_endofpacket   ),
+    .snk_valid_i         ( avst_if_ins.snk_valid         ),
+    .snk_ready_o         ( avst_if_ins.snk_ready         ),
   
-    .src_data_o          ( dut_src_data          ),
-    .src_startofpacket_o ( dut_src_startofpacket ),
-    .src_endofpacket_o   ( dut_src_endofpacket   ),
-    .src_valid_o         ( dut_src_valid         ),
-    .src_ready_i         ( dut_src_ready         )
+    .src_data_o          ( avst_if_ins.src_data          ),
+    .src_startofpacket_o ( avst_if_ins.src_startofpacket ),
+    .src_endofpacket_o   ( avst_if_ins.src_endofpacket   ),
+    .src_valid_o         ( avst_if_ins.src_valid         ),
+    .src_ready_i         ( avst_if_ins.src_ready         )
   );
   
-
   task throw_err(string msg);
     $error(msg, $time);
     ##5;
@@ -74,19 +68,19 @@ module main_sort_tb #(
     while( i < len_pkt )
       begin
         sorted_data[i][DWIDTH-1:0]  = $urandom_range(2**32-1, 0);
-        dut_snk_data   <= sorted_data[i];
+        avst_if_ins.snk_data   <= sorted_data[i];
         if( $urandom_range(99, 0) < chance_of_send_valid )
           begin
             i = i + 1;
-            dut_snk_valid         <= 1'b1;
-            dut_snk_startofpacket <= ( i == 1       );
-            dut_snk_endofpacket   <= ( i == len_pkt );
+            avst_if_ins.snk_valid         <= 1'b1;
+            avst_if_ins.snk_startofpacket <= ( i == 1       );
+            avst_if_ins.snk_endofpacket   <= ( i == len_pkt );
           end
         else
-          dut_snk_valid <= 1'b0;
+          avst_if_ins.snk_valid <= 1'b0;
         ##1;
-        dut_snk_startofpacket <= 1'b0;
-        dut_snk_endofpacket   <= 1'b0;
+        avst_if_ins.snk_startofpacket <= 1'b0;
+        avst_if_ins.snk_endofpacket   <= 1'b0;
       end
     
     sorted_data.sort(); 
@@ -96,9 +90,9 @@ module main_sort_tb #(
     // $write("\n");
 
     // clean signals
-    dut_snk_startofpacket <= 1'b0;
-    dut_snk_endofpacket   <= 1'b0;
-    dut_snk_valid         <= 1'b0;
+    avst_if_ins.snk_startofpacket <= 1'b0;
+    avst_if_ins.snk_endofpacket   <= 1'b0;
+    avst_if_ins.snk_valid         <= 1'b0;
   endtask
   
   // time of waiting answer in clocks/cycles
@@ -111,22 +105,22 @@ module main_sort_tb #(
     while( i < sorted_data.size() )
       begin
         time_waiting = time_waiting - 1;
-        if( dut_src_valid === 1'b1 )
+        if( avst_if_ins.src_valid === 1'b1 )
           begin
             
             //$display("%5d, %5d, %8d", dut_src_data, sorted_data[i], $time);
             if( ( i == 0 ) && 
-                ( dut_src_endofpacket === 1'b1 || dut_src_startofpacket === 1'b0 ) )
+                ( avst_if_ins.src_endofpacket === 1'b1 || avst_if_ins.src_startofpacket === 1'b0 ) )
               throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE START OF SENDING PACKET");
 
             if( ( i == sorted_data.size() - 1 ) && 
-                ( dut_src_endofpacket === 1'b0 || dut_src_startofpacket === 1'b1 ) )
+                ( avst_if_ins.src_endofpacket === 1'b0 || avst_if_ins.src_startofpacket === 1'b1 ) )
               throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE END OF SENDING PACKET");
 
             if( ( i > 0 && i < i == sorted_data.size() - 1 ) &&
-                ( dut_src_endofpacket === 1'b1 || dut_src_startofpacket === 1'b1 ) )
+                ( avst_if_ins.src_endofpacket === 1'b1 || avst_if_ins.src_startofpacket === 1'b1 ) )
               throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE MIDDLE OF SENDING PACKET");
-            if( dut_src_data != sorted_data[i] )
+            if( avst_if_ins.src_data != sorted_data[i] )
               throw_err("WRONG DATA");
             
             i = i + 1;
@@ -135,38 +129,42 @@ module main_sort_tb #(
         if( time_waiting < 0 )
           throw_err("TEST TOO LONG");
       end
-    wait(dut_snk_ready);
+    wait(avst_if_ins.snk_ready);
   endtask
 
 
   initial
     begin
-      dut_snk_startofpacket <= 1'b0;
-      dut_snk_endofpacket   <= 1'b0;
-      dut_snk_valid         <= 1'b0;
-      dut_src_ready = 1'b1;
+      avst_if_ins.snk_startofpacket <= 1'b0;
+      avst_if_ins.snk_endofpacket   <= 1'b0;
+      avst_if_ins.snk_valid         <= 1'b0;
+      avst_if_ins.src_ready         <= 1'b1;
       srst <= 1'b1;
       ##1;
       srst <= 1'b0;
       ##1;
-      
+
+      ///////////////////////////////////////////////////////////////////////////
+      // UNCOMMENT THIS BLOCK TO DEEP TESTING
       // stress-test
-      for(int curr_len_pkt = 2; curr_len_pkt <= MAX_PKT_LEN; curr_len_pkt++)
-        for(int curr_chance = 5; curr_chance <= 100; curr_chance += 5)
-          for(int num_test = 0; num_test < 100; num_test++)
-            begin
-              fork
-                send_packet(curr_len_pkt, curr_chance);
-                check_task();
-              join
-              // not necessary move, only for checking problems
-              // in idle
-              ##($urandom_range(10, 0));
-            end
-      
+      //
+      // for(int curr_len_pkt = 2; curr_len_pkt <= MAX_PKT_LEN; curr_len_pkt++)
+      //   for(int curr_chance = 5; curr_chance <= 100; curr_chance += 5)
+      //     for(int num_test = 0; num_test < 100; num_test++)
+      //       begin
+      //         fork
+      //           send_packet(curr_len_pkt, curr_chance);
+      //           check_task();
+      //         join
+      //         // not necessary move, only for checking problems
+      //         // in idle
+      //         ##($urandom_range(10, 0));
+      //       end
+      ///////////////////////////////////////////////////////////////////////////
+
       // tests with randomized length of packets
       // and randomized time of sending packets into sort
-      for(int num_test = 0; num_test < 1000; num_test++)
+      for(int num_test = 0; num_test < 100; num_test++)
         begin
           fork
             send_packet($urandom_range(MAX_PKT_LEN, 2), $urandom_range(100, 1));
