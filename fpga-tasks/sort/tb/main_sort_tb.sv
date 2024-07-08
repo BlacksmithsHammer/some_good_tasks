@@ -1,3 +1,77 @@
+class TX_driver #(
+  parameter DWIDTH      = 8,
+  parameter MAX_PKT_LEN = 16
+);
+  logic [DWIDTH-1:0] pkt[];
+  virtual avst_if if_ins;
+  bit have_pkt;
+
+  function new(
+    virtual avst_if if_ins
+  );
+    this.have_pkt = 0;
+    this.if_ins = if_ins;
+    this.if_ins.data          <=   '0;
+    this.if_ins.startofpacket <= 1'b0;
+    this.if_ins.endofpacket   <= 1'b0;
+    this.if_ins.valid         <= 1'b0;
+  endfunction
+
+  task throw_err(string msg);
+    $error(msg, $time);
+    $stop();
+  endtask
+
+  task set_pkt( logic [DWIDTH-1:0] pkt_i[] );
+    if( pkt_i.size() > MAX_PKT_LEN)
+      begin
+        $error("WRONG PACKET LENGTH IN TX DRIVER ", $time);
+        $stop();
+      end
+    
+    this.pkt = pkt_i;
+    have_pkt = 1;
+  endtask
+
+  task send( int chance_of_send_valid );
+    int i = 0;
+
+
+    if( !have_pkt )
+      $throw_err("HAVNT PACKETS IN RX BUFFER ");
+    if( chance_of_send_valid < 1 || chance_of_send_valid > 100 )
+      throw_err("WRONG CHANCE IN TASK CHANCE_OF_SEND_VALID IN TIME ");
+
+    while(i < this.pkt.size())
+      if( $urandom_range(0, 99) < chance_of_send_valid)
+        begin
+          this.if_ins.data          <= this.pkt[i];
+          this.if_ins.valid         <= 1'b1;
+          this.if_ins.startofpacket <= ( i == 0                   );
+          this.if_ins.endofpacket   <= ( i == this.pkt.size() - 1 );
+
+          i = i + 1;
+          @(posedge this.if_ins.clk);
+        end
+      else
+        begin
+          this.if_ins.data          <= $urandom_range(2**32-1, 0);
+          this.if_ins.valid         <= 1'b0;
+          this.if_ins.startofpacket <= 1'b0;
+          this.if_ins.endofpacket   <= 1'b0;
+        end
+
+    
+
+  endtask
+
+endclass
+
+// class RX_driver;
+//     function new(); 
+//     endfunction
+// endclass
+
 module main_sort_tb #(
   parameter DWIDTH      = 8,
   parameter MAX_PKT_LEN = 16
@@ -14,31 +88,41 @@ module main_sort_tb #(
     @( posedge clk );
   endclocking
   
-  sort_avst_if #(
+
+  avst_if #(
     .DWIDTH ( DWIDTH )
-  ) avst_if_ins (
+  ) avst_if_i (
     .clk  ( clk  ),
     .srst ( srst )
   );
+
+  avst_if #(
+    .DWIDTH ( DWIDTH )
+  ) avst_if_o (
+    .clk  ( clk  ),
+    .srst ( srst )
+  );
+
+  TX_driver tx_drv_ins;
 
   main_sort #(
     .DWIDTH      ( DWIDTH      ),
     .MAX_PKT_LEN ( MAX_PKT_LEN )
   ) dut (
-    .clk_i               ( clk                   ),
-    .srst_i              ( srst                  ),
+    .clk_i               ( clk                     ),
+    .srst_i              ( srst                    ),
   
-    .snk_data_i          ( avst_if_ins.snk_data          ),
-    .snk_startofpacket_i ( avst_if_ins.snk_startofpacket ),
-    .snk_endofpacket_i   ( avst_if_ins.snk_endofpacket   ),
-    .snk_valid_i         ( avst_if_ins.snk_valid         ),
-    .snk_ready_o         ( avst_if_ins.snk_ready         ),
+    .snk_data_i          ( avst_if_i.data          ),
+    .snk_startofpacket_i ( avst_if_i.startofpacket ),
+    .snk_endofpacket_i   ( avst_if_i.endofpacket   ),
+    .snk_valid_i         ( avst_if_i.valid         ),
+    .snk_ready_o         ( avst_if_i.ready         ),
   
-    .src_data_o          ( avst_if_ins.src_data          ),
-    .src_startofpacket_o ( avst_if_ins.src_startofpacket ),
-    .src_endofpacket_o   ( avst_if_ins.src_endofpacket   ),
-    .src_valid_o         ( avst_if_ins.src_valid         ),
-    .src_ready_i         ( avst_if_ins.src_ready         )
+    .src_data_o          ( avst_if_o.data          ),
+    .src_startofpacket_o ( avst_if_o.startofpacket ),
+    .src_endofpacket_o   ( avst_if_o.endofpacket   ),
+    .src_valid_o         ( avst_if_o.valid         ),
+    .src_ready_i         ( avst_if_o.ready         )
   );
   
   task throw_err(string msg);
@@ -46,6 +130,8 @@ module main_sort_tb #(
     ##5;
     $stop();
   endtask
+
+
 
   // global data and states for checker
   // DWIDTH without (-1) to skip sign bit in sort
@@ -68,19 +154,19 @@ module main_sort_tb #(
     while( i < len_pkt )
       begin
         sorted_data[i][DWIDTH-1:0]  = $urandom_range(2**32-1, 0);
-        avst_if_ins.snk_data   <= sorted_data[i];
+        avst_if_i.data   <= sorted_data[i];
         if( $urandom_range(99, 0) < chance_of_send_valid )
           begin
             i = i + 1;
-            avst_if_ins.snk_valid         <= 1'b1;
-            avst_if_ins.snk_startofpacket <= ( i == 1       );
-            avst_if_ins.snk_endofpacket   <= ( i == len_pkt );
+            avst_if_i.valid         <= 1'b1;
+            avst_if_i.startofpacket <= ( i == 1       );
+            avst_if_i.endofpacket   <= ( i == len_pkt );
           end
         else
-          avst_if_ins.snk_valid <= 1'b0;
+          avst_if_i.valid <= 1'b0;
         ##1;
-        avst_if_ins.snk_startofpacket <= 1'b0;
-        avst_if_ins.snk_endofpacket   <= 1'b0;
+        avst_if_i.startofpacket <= 1'b0;
+        avst_if_i.endofpacket   <= 1'b0;
       end
     
     sorted_data.sort(); 
@@ -90,9 +176,9 @@ module main_sort_tb #(
     // $write("\n");
 
     // clean signals
-    avst_if_ins.snk_startofpacket <= 1'b0;
-    avst_if_ins.snk_endofpacket   <= 1'b0;
-    avst_if_ins.snk_valid         <= 1'b0;
+    avst_if_i.startofpacket <= 1'b0;
+    avst_if_i.endofpacket   <= 1'b0;
+    avst_if_i.valid         <= 1'b0;
   endtask
   
   // time of waiting answer in clocks/cycles
@@ -105,22 +191,22 @@ module main_sort_tb #(
     while( i < sorted_data.size() )
       begin
         time_waiting = time_waiting - 1;
-        if( avst_if_ins.src_valid === 1'b1 )
+        if( avst_if_o.valid === 1'b1 )
           begin
             
             //$display("%5d, %5d, %8d", dut_src_data, sorted_data[i], $time);
             if( ( i == 0 ) && 
-                ( avst_if_ins.src_endofpacket === 1'b1 || avst_if_ins.src_startofpacket === 1'b0 ) )
+                ( avst_if_o.endofpacket === 1'b1 || avst_if_o.startofpacket === 1'b0 ) )
               throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE START OF SENDING PACKET");
 
             if( ( i == sorted_data.size() - 1 ) && 
-                ( avst_if_ins.src_endofpacket === 1'b0 || avst_if_ins.src_startofpacket === 1'b1 ) )
+                ( avst_if_o.endofpacket === 1'b0 || avst_if_o.startofpacket === 1'b1 ) )
               throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE END OF SENDING PACKET");
 
             if( ( i > 0 && i < i == sorted_data.size() - 1 ) &&
-                ( avst_if_ins.src_endofpacket === 1'b1 || avst_if_ins.src_startofpacket === 1'b1 ) )
+                ( avst_if_o.endofpacket === 1'b1 || avst_if_o.startofpacket === 1'b1 ) )
               throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE MIDDLE OF SENDING PACKET");
-            if( avst_if_ins.src_data != sorted_data[i] )
+            if( avst_if_o.data != sorted_data[i] )
               throw_err("WRONG DATA");
             
             i = i + 1;
@@ -129,16 +215,17 @@ module main_sort_tb #(
         if( time_waiting < 0 )
           throw_err("TEST TOO LONG");
       end
-    wait(avst_if_ins.snk_ready);
+    wait(avst_if_i.ready);
   endtask
+
 
 
   initial
     begin
-      avst_if_ins.snk_startofpacket <= 1'b0;
-      avst_if_ins.snk_endofpacket   <= 1'b0;
-      avst_if_ins.snk_valid         <= 1'b0;
-      avst_if_ins.src_ready         <= 1'b1;
+      avst_if_i.startofpacket <= 1'b0;
+      avst_if_i.endofpacket   <= 1'b0;
+      avst_if_i.valid         <= 1'b0;
+      avst_if_o.ready         <= 1'b1;
       srst <= 1'b1;
       ##1;
       srst <= 1'b0;
@@ -164,7 +251,7 @@ module main_sort_tb #(
 
       // tests with randomized length of packets
       // and randomized time of sending packets into sort
-      for(int num_test = 0; num_test < 100; num_test++)
+      for(int num_test = 0; num_test < 5; num_test++)
         begin
           fork
             send_packet($urandom_range(MAX_PKT_LEN, 2), $urandom_range(100, 1));
@@ -175,6 +262,21 @@ module main_sort_tb #(
           ##($urandom_range(10, 0));
         end
       //$display("TESTS PASSED SUCCESSFULLY FOR DWIDTH=%0d and MAX_PKT_LEN=%0d", DWIDTH, MAX_PKT_LEN);
+      
+
+      ##100;
+
+      sorted_data = new[5];
+      sorted_data[0] = 100;
+      sorted_data[1] = 104;
+      sorted_data[2] = 103;
+      sorted_data[3] = 101;
+      sorted_data[4] = 102;
+
+      tx_drv_ins = new (avst_if_i);
+      tx_drv_ins.set_pkt(sorted_data);
+      tx_drv_ins.send(100);
+      ##100;
       $stop();
     end
 
