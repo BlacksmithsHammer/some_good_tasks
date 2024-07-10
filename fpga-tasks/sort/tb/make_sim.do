@@ -5,6 +5,8 @@ if [batch_mode] { onerror { quit -f -code 2 } }
 vlog -sv ../rtl/main_sort.sv
 vlog -sv ../rtl/true_dual_port_scram.sv
 vlog -sv ../rtl/insertion_sort.sv
+vlog -sv rx_driver.sv
+vlog -sv tx_driver.sv
 vlog -sv avst_if.sv
 vlog -sv main_sort_tb.sv
 
