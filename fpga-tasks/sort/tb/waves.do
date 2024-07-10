@@ -2,18 +2,18 @@ add wave                       /main_sort_tb/clk
 add wave                       /main_sort_tb/srst
 
 # add wave -color pink -unsigned /main_sort_tb/dut/ram_ins/ram
-add wave             -unsigned /main_sort_tb/avst_if_ins/snk_data
-add wave                       /main_sort_tb/avst_if_ins/snk_startofpacket
-add wave                       /main_sort_tb/avst_if_ins/snk_endofpacket
-add wave                       /main_sort_tb/avst_if_ins/snk_valid
-add wave                       /main_sort_tb/avst_if_ins/snk_ready
+add wave             -unsigned /main_sort_tb/avst_if_i/data
+add wave                       /main_sort_tb/avst_if_i/startofpacket
+add wave                       /main_sort_tb/avst_if_i/endofpacket
+add wave                       /main_sort_tb/avst_if_i/valid
+add wave                       /main_sort_tb/avst_if_i/ready
 # add wave                       /main_sort_tb/dut/src_valid_d
 
-add wave             -unsigned /main_sort_tb/avst_if_ins/src_data
-add wave                       /main_sort_tb/avst_if_ins/src_startofpacket
-add wave                       /main_sort_tb/avst_if_ins/src_endofpacket
-add wave                       /main_sort_tb/avst_if_ins/src_valid
-add wave                       /main_sort_tb/avst_if_ins/src_ready
+add wave             -unsigned /main_sort_tb/avst_if_o/data
+add wave                       /main_sort_tb/avst_if_o/startofpacket
+add wave                       /main_sort_tb/avst_if_o/endofpacket
+add wave                       /main_sort_tb/avst_if_o/valid
+add wave                       /main_sort_tb/avst_if_o/ready
 # add wave                       /main_sort_tb/dut/state
 # add wave                       /main_sort_tb/dut/start_sorting
 # add wave -color blue           /main_sort_tb/dut/ins_sort/start_sorting_i
@@ -35,4 +35,4 @@ add wave                       /main_sort_tb/avst_if_ins/src_ready
 # add wave             -unsigned /main_sort_tb/dut/ins_sort/need_swap
 # add wave                       /main_sort_tb/dut/ins_sort/sort_state
 # add wave                       /main_sort_tb/dut/ins_sort/change_i_d
-add wave  -r *
+# add wave  -r *

@@ -2,10 +2,21 @@ class TX_driver #(
   parameter DWIDTH      = 8,
   parameter MAX_PKT_LEN = 16
 );
-  logic [DWIDTH-1:0] pkt[];
-  virtual avst_if if_ins;
-  bit have_pkt;
+  /////////////////////////////////////////////////////////
+  // local fields
+  /////////////////////////////////////////////////////////
+  local virtual avst_if if_ins;
+  local logic [DWIDTH-1:0] pkt[];
+  local bit have_pkt;
 
+  local task throw_err(string msg);
+    $error(msg, $time);
+    $stop();
+  endtask
+
+  /////////////////////////////////////////////////////////
+  // public fields
+  /////////////////////////////////////////////////////////
   function new(
     virtual avst_if if_ins
   );
@@ -17,30 +28,24 @@ class TX_driver #(
     this.if_ins.valid         <= 1'b0;
   endfunction
 
-  task throw_err(string msg);
-    $error(msg, $time);
-    $stop();
-  endtask
-
   task set_pkt( logic [DWIDTH-1:0] pkt_i[] );
     if( pkt_i.size() > MAX_PKT_LEN)
       begin
         $error("WRONG PACKET LENGTH IN TX DRIVER ", $time);
         $stop();
       end
-    
     this.pkt = pkt_i;
-    have_pkt = 1;
+    this.have_pkt = 1;
   endtask
 
   task send( int chance_of_send_valid );
     int i = 0;
-
-
-    if( !have_pkt )
-      $throw_err("HAVNT PACKETS IN RX BUFFER ");
+    if( !this.have_pkt )
+      throw_err("HAVNT PACKETS IN TX BUFFER ");
     if( chance_of_send_valid < 1 || chance_of_send_valid > 100 )
       throw_err("WRONG CHANCE IN TASK CHANCE_OF_SEND_VALID IN TIME ");
+    
+    wait(this.if_ins.ready);
 
     while(i < this.pkt.size())
       if( $urandom_range(0, 99) < chance_of_send_valid)
@@ -49,9 +54,8 @@ class TX_driver #(
           this.if_ins.valid         <= 1'b1;
           this.if_ins.startofpacket <= ( i == 0                   );
           this.if_ins.endofpacket   <= ( i == this.pkt.size() - 1 );
-
           i = i + 1;
-          @(posedge this.if_ins.clk);
+          @( posedge this.if_ins.clk );
         end
       else
         begin
@@ -59,18 +63,81 @@ class TX_driver #(
           this.if_ins.valid         <= 1'b0;
           this.if_ins.startofpacket <= 1'b0;
           this.if_ins.endofpacket   <= 1'b0;
+          @( posedge this.if_ins.clk );
         end
-
-    
-
+    this.if_ins.valid         <= 1'b0;
+    this.if_ins.startofpacket <= 1'b0;
+    this.if_ins.endofpacket   <= 1'b0;
+    this.have_pkt = 0;
   endtask
 
 endclass
 
-// class RX_driver;
-//     function new(); 
-//     endfunction
-// endclass
+
+class RX_driver #(
+  parameter DWIDTH      = 8,
+  parameter MAX_PKT_LEN = 16
+);
+  /////////////////////////////////////////////////////////
+  // local fields
+  /////////////////////////////////////////////////////////
+  local virtual avst_if if_ins;
+  local int size_pkt;
+  local logic [DWIDTH-1:0] pkt [$:MAX_PKT_LEN-1];
+
+  local task throw_err(string msg);
+    $error(msg, $time);
+    $stop();
+  endtask
+
+  /////////////////////////////////////////////////////////
+  // public fields
+  /////////////////////////////////////////////////////////
+  function new(
+    virtual avst_if if_ins
+  ); 
+    this.if_ins = if_ins;
+    this.if_ins.ready = 1'b1;
+  endfunction
+  
+  task receive_packet();
+    while( !( this.if_ins.endofpacket && this.if_ins.valid ) )
+      begin
+        if( this.if_ins.valid )
+          begin
+            this.pkt.push_back(this.if_ins.data);
+        
+            if( !this.if_ins.startofpacket && pkt.size() == 1 )
+                throw_err("WRONG AVALON-ST SIGNALS");
+        
+            if( this.if_ins.startofpacket && pkt.size() != 1 )
+              throw_err("WRONG AVALON-ST SIGNALS");
+            
+            if( this.pkt.size() > MAX_PKT_LEN)
+              throw_err("PACKET MORE THAN MAX_PKT_LEN");
+          end
+        @( posedge this.if_ins.clk );
+
+      end
+
+    // get last element skipped in while
+    pkt.push_back(this.if_ins.data);
+    this.size_pkt = pkt.size();
+
+    if( this.if_ins.startofpacket )
+      throw_err("WRONG AVALON-ST SIGNALS");
+
+  endtask
+
+  function int get_sizeofpkt();
+    get_sizeofpkt = size_pkt;
+  endfunction
+
+  function logic [DWIDTH-1:0] get_nextelement();
+    get_nextelement = pkt.pop_front();
+  endfunction
+endclass
+
 
 module main_sort_tb #(
   parameter DWIDTH      = 8,
@@ -87,7 +154,6 @@ module main_sort_tb #(
   default clocking cb
     @( posedge clk );
   endclocking
-  
 
   avst_if #(
     .DWIDTH ( DWIDTH )
@@ -104,6 +170,7 @@ module main_sort_tb #(
   );
 
   TX_driver tx_drv_ins;
+  RX_driver rx_drv_ins;
 
   main_sort #(
     .DWIDTH      ( DWIDTH      ),
@@ -132,151 +199,68 @@ module main_sort_tb #(
   endtask
 
 
-
-  // global data and states for checker
-  // DWIDTH without (-1) to skip sign bit in sort
-  logic unsigned [DWIDTH-1:0] sorted_data[]; 
-  int data_in_process;
-
   // len_pkt - number of words in packet
-  task send_packet(int len_pkt = MAX_PKT_LEN,
-                   int chance_of_send_valid = 100);
-    int i;
-    i = 0;
+  // chance_of_send_valid - chance between 1 and 100 of send VALID word every cycle
+  task send_and_check(TX_driver tx, 
+                      RX_driver rx, 
+                      int len_pkt,
+                      int chance_of_send_valid);
+    logic unsigned [DWIDTH-1:0] sorted_data[];
+    logic unsigned [DWIDTH-1:0] curr_val;
     sorted_data = new[len_pkt];
-    data_in_process = 1;
 
-    if( len_pkt > MAX_PKT_LEN || len_pkt < 2 )
-      throw_err("WRONG LENGTH OF PACKET IN TASK SEND_PACKET IN TIME");
-    if( chance_of_send_valid < 1 || chance_of_send_valid > 100 )
-      throw_err("WRONG CHANCE IN TASK CHANCE_OF_SEND_VALID IN TIME");
-
-    while( i < len_pkt )
-      begin
-        sorted_data[i][DWIDTH-1:0]  = $urandom_range(2**32-1, 0);
-        avst_if_i.data   <= sorted_data[i];
-        if( $urandom_range(99, 0) < chance_of_send_valid )
-          begin
-            i = i + 1;
-            avst_if_i.valid         <= 1'b1;
-            avst_if_i.startofpacket <= ( i == 1       );
-            avst_if_i.endofpacket   <= ( i == len_pkt );
-          end
-        else
-          avst_if_i.valid <= 1'b0;
-        ##1;
-        avst_if_i.startofpacket <= 1'b0;
-        avst_if_i.endofpacket   <= 1'b0;
-      end
     
+    for(int i = 0; i < len_pkt; i++)
+      sorted_data[i][DWIDTH-1:0]  = $urandom_range(2**32-1, 0);
+        $display("new task STARTED");
+    fork
+      $display("forked at", $time);
+      tx.set_pkt(sorted_data);
+      tx.send(chance_of_send_valid);
+      rx.receive_packet();
+    join
+    $display("fork join at", $time);
     sorted_data.sort(); 
-    // $display("=====================================================");
-    // for (int j = 0; j < sorted_data.size(); j++)
-    //   $write("%d[%0d] ", sorted_data[j], j);
-    // $write("\n");
 
-    // clean signals
-    avst_if_i.startofpacket <= 1'b0;
-    avst_if_i.endofpacket   <= 1'b0;
-    avst_if_i.valid         <= 1'b0;
+    if( rx.get_sizeofpkt() == sorted_data.size() )
+      begin
+        for(int i = 0; i < rx.get_sizeofpkt(); i++)
+        begin
+          curr_val = rx.get_nextelement();
+          if( curr_val != sorted_data[i] )
+            begin
+              $display("EXPECTED %5u, got %5u", sorted_data[i], curr_val);
+              throw_err("WRONG DATA IN RECEIVED PACKET");
+            end
+
+        end
+      end
+    else
+      begin
+        $display("EXPECTED %d, GOT %d", len_pkt, rx.get_sizeofpkt());
+        throw_err("DIFFERENCE BETWEEN SIZES OF PACKETS");
+      end
+    ##1;
   endtask
   
-  // time of waiting answer in clocks/cycles
-  task check_task(longint time_waiting = 10000);
-    int i;
-    i = 0;
-    // check of x (isunknown) skipped, because uses
-    // timer-like counter time_waiting to check infinite
-    // sorting and some other situations
-    while( i < sorted_data.size() )
-      begin
-        time_waiting = time_waiting - 1;
-        if( avst_if_o.valid === 1'b1 )
-          begin
-            
-            //$display("%5d, %5d, %8d", dut_src_data, sorted_data[i], $time);
-            if( ( i == 0 ) && 
-                ( avst_if_o.endofpacket === 1'b1 || avst_if_o.startofpacket === 1'b0 ) )
-              throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE START OF SENDING PACKET");
-
-            if( ( i == sorted_data.size() - 1 ) && 
-                ( avst_if_o.endofpacket === 1'b0 || avst_if_o.startofpacket === 1'b1 ) )
-              throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE END OF SENDING PACKET");
-
-            if( ( i > 0 && i < i == sorted_data.size() - 1 ) &&
-                ( avst_if_o.endofpacket === 1'b1 || avst_if_o.startofpacket === 1'b1 ) )
-              throw_err("PROBLEMS WITH AVALON-ST SIGNALS IN THE MIDDLE OF SENDING PACKET");
-            if( avst_if_o.data != sorted_data[i] )
-              throw_err("WRONG DATA");
-            
-            i = i + 1;
-          end
-        ##1;
-        if( time_waiting < 0 )
-          throw_err("TEST TOO LONG");
-      end
-    wait(avst_if_i.ready);
-  endtask
-
-
 
   initial
     begin
-      avst_if_i.startofpacket <= 1'b0;
-      avst_if_i.endofpacket   <= 1'b0;
-      avst_if_i.valid         <= 1'b0;
-      avst_if_o.ready         <= 1'b1;
+      tx_drv_ins = new(avst_if_i);
+      rx_drv_ins = new(avst_if_o);
       srst <= 1'b1;
       ##1;
       srst <= 1'b0;
       ##1;
 
-      ///////////////////////////////////////////////////////////////////////////
-      // UNCOMMENT THIS BLOCK TO DEEP TESTING
-      // stress-test
-      //
-      // for(int curr_len_pkt = 2; curr_len_pkt <= MAX_PKT_LEN; curr_len_pkt++)
-      //   for(int curr_chance = 5; curr_chance <= 100; curr_chance += 5)
-      //     for(int num_test = 0; num_test < 100; num_test++)
-      //       begin
-      //         fork
-      //           send_packet(curr_len_pkt, curr_chance);
-      //           check_task();
-      //         join
-      //         // not necessary move, only for checking problems
-      //         // in idle
-      //         ##($urandom_range(10, 0));
-      //       end
-      ///////////////////////////////////////////////////////////////////////////
+      for( int len_pkt = 2; len_pkt <= MAX_PKT_LEN; len_pkt = len_pkt + 1)
+        for( int chance = 10; chance <= 100; chance = chance + 10 )
+          for( int iterations = 0; iterations < 10; iterations = iterations + 1)
+            begin
+              send_and_check(tx_drv_ins, rx_drv_ins, len_pkt, chance);
+            end
 
-      // tests with randomized length of packets
-      // and randomized time of sending packets into sort
-      for(int num_test = 0; num_test < 5; num_test++)
-        begin
-          fork
-            send_packet($urandom_range(MAX_PKT_LEN, 2), $urandom_range(100, 1));
-            check_task();
-          join
-          // not necessary move, only for checking problems
-          // in idle/effect of pause
-          ##($urandom_range(10, 0));
-        end
-      //$display("TESTS PASSED SUCCESSFULLY FOR DWIDTH=%0d and MAX_PKT_LEN=%0d", DWIDTH, MAX_PKT_LEN);
-      
-
-      ##100;
-
-      sorted_data = new[5];
-      sorted_data[0] = 100;
-      sorted_data[1] = 104;
-      sorted_data[2] = 103;
-      sorted_data[3] = 101;
-      sorted_data[4] = 102;
-
-      tx_drv_ins = new (avst_if_i);
-      tx_drv_ins.set_pkt(sorted_data);
-      tx_drv_ins.send(100);
-      ##100;
+      ##10;
       $stop();
     end
 
