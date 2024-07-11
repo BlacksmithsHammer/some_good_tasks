@@ -5,10 +5,7 @@ if [batch_mode] { onerror { quit -f -code 2 } }
 vlog -sv ../rtl/main_sort.sv
 vlog -sv ../rtl/true_dual_port_scram.sv
 vlog -sv ../rtl/insertion_sort.sv
-vlog -sv rx_driver.sv
-vlog -sv tx_driver.sv
-vlog -sv avst_if.sv
-vlog -sv main_sort_tb.sv
+vlog -sv *.sv
 
 set PARAM_LIST { " " }
 if [batch_mode] {
@@ -19,6 +16,13 @@ if [batch_mode] {
     "-gDWIDTH=16 -gMAX_PKT_LEN=16"
     "-gDWIDTH=32 -gMAX_PKT_LEN=8"
     "-gDWIDTH=32 -gMAX_PKT_LEN=16"
+
+    "-gDWIDTH=8  -gMAX_PKT_LEN=1024"
+    #"-gDWIDTH=8  -gMAX_PKT_LEN=2048"
+    #"-gDWIDTH=16 -gMAX_PKT_LEN=1024"
+    #"-gDWIDTH=16 -gMAX_PKT_LEN=2048"
+    #"-gDWIDTH=32 -gMAX_PKT_LEN=1024"
+    #"-gDWIDTH=32 -gMAX_PKT_LEN=2048"
   }
 }
 # else {

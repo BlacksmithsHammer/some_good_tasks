@@ -1,6 +1,6 @@
 class TX_driver #(
-  parameter DWIDTH      = 8,
-  parameter MAX_PKT_LEN = 16
+  parameter DWIDTH,
+  parameter MAX_PKT_LEN
 );
   /////////////////////////////////////////////////////////
   // local fields
@@ -29,7 +29,7 @@ class TX_driver #(
   endfunction
 
   task set_pkt( logic [DWIDTH-1:0] pkt_i[] );
-    if( pkt_i.size() > MAX_PKT_LEN)
+    if( pkt_i.size() > MAX_PKT_LEN || pkt_i.size() < 2)
       begin
         $error("WRONG PACKET LENGTH IN TX DRIVER ", $time);
         $stop();
@@ -55,7 +55,7 @@ class TX_driver #(
           this.if_ins.startofpacket <= ( i == 0                   );
           this.if_ins.endofpacket   <= ( i == this.pkt.size() - 1 );
           i = i + 1;
-          @( posedge this.if_ins.clk );
+          @( this.if_ins.cb );
         end
       else
         begin
@@ -63,7 +63,7 @@ class TX_driver #(
           this.if_ins.valid         <= 1'b0;
           this.if_ins.startofpacket <= 1'b0;
           this.if_ins.endofpacket   <= 1'b0;
-          @( posedge this.if_ins.clk );
+          @( this.if_ins.cb );
         end
     this.if_ins.valid         <= 1'b0;
     this.if_ins.startofpacket <= 1'b0;

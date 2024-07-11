@@ -5,9 +5,9 @@ interface avst_if #(
   input srst
 );
 
-  // clocking cb 
-  //   @(posedge clk);
-  // endclocking
+  clocking cb
+    @(posedge clk);
+  endclocking
 
   logic   [DWIDTH-1:0] data;
   logic                startofpacket;

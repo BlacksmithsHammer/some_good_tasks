@@ -1,6 +1,6 @@
 class RX_driver #(
-  parameter DWIDTH      = 8,
-  parameter MAX_PKT_LEN = 16
+  int DWIDTH      = 8,
+  int MAX_PKT_LEN = 32
 );
   /////////////////////////////////////////////////////////
   // local fields
@@ -40,7 +40,7 @@ class RX_driver #(
             if( this.pkt.size() > MAX_PKT_LEN)
               throw_err("PACKET MORE THAN MAX_PKT_LEN");
           end
-        @( posedge this.if_ins.clk );
+        @( this.if_ins.cb );
 
       end
 
