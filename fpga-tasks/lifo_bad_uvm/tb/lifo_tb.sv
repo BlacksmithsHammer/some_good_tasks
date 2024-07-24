@@ -1,19 +1,30 @@
 /////////////////////////////////////////////////////////////////////
 // DEFINES
 /////////////////////////////////////////////////////////////////////
-localparam int REQ_EMPTY = 0;
-localparam int REQ_READ  = 1;
-localparam int REQ_WRITE = 2;
-localparam int REQ_RW    = 3;
+parameter int REQ_EMPTY = 0;
+parameter int REQ_READ  = 1;
+parameter int REQ_WRITE = 2;
+parameter int REQ_RW    = 3;
 
+typedef enum { 
+  SOME_RW,
+  WRITE_READ_FULL,
+  OVER_RW
+} test_case;
 /////////////////////////////////////////////////////////////////////
-//MACRO
+// MACRO
 /////////////////////////////////////////////////////////////////////
 `define THROW_WRONG_SIGNALS(expected, got, problem_name) \
     begin \
       $display("EXPECTED %5u, got %5u", expected, got); \
       $error(problem_name, $time); \
       $stop(); \
+    end 
+
+`define SHOW_WRONG_SIGNALS(expected, got, problem_name) \
+    begin \
+      $display("EXPECTED %5u, got %5u", expected, got); \
+      $display(problem_name, $time); \
     end 
 
 `define THROW_CRITICAL_ERROR(problem_name) \
@@ -54,7 +65,7 @@ endinterface
 //                    GENERATOR TO SCOREBOARD
 /////////////////////////////////////////////////////////////////////
 
-class trans_from_gen #(
+class trans_from_generator #(
   parameter int DWIDTH = 16
 );
   local int req_type;
@@ -81,7 +92,6 @@ class trans_from_monitor #(
   parameter int DWIDTH = 16,
   parameter int AWIDTH = 8
 );
-  local virtual lifo_if    _if;
   local logic [DWIDTH-1:0] word;
   local logic              almost_empty;
   local logic              empty;
@@ -136,8 +146,8 @@ class lifo_generator #(
     this.gen2drv = gen2drv;
   endfunction
 
-  task generate_new( int n  = 10,
-                     int op = REQ_RW);
+  task generate_stimulus( int n  = 10,
+                          int op = REQ_RW);
     T tr;
     for (int i = 0; i < n; i++) 
       begin
@@ -145,6 +155,30 @@ class lifo_generator #(
         $display(tr.get_word());
         this.gen2drv.put( tr );
       end
+  endtask
+
+  task generate_test(test_case _test);
+    case( _test )
+      SOME_RW:
+        begin
+          generate_stimulus(5, REQ_WRITE);
+          generate_stimulus(5, REQ_READ );
+        end
+      WRITE_READ_FULL:
+        begin
+
+        end
+
+      OVER_RW:
+        begin
+
+        end
+      
+      default:
+        begin
+          `THROW_CRITICAL_ERROR("WRONG TEST CASE");
+        end
+    endcase
   endtask
 
 endclass
@@ -161,8 +195,9 @@ class lifo_driver #(
   local T trans;
   local virtual lifo_if _if;
 
-  function new(virtual lifo_if _if, mailbox #( T ) gen2drv);
+  function new(virtual lifo_if _if, mailbox #( T ) gen2drv, mailbox #( T ) drv2scb);
     this.gen2drv   = gen2drv;
+    this.drv2scb   = drv2scb;
     this._if       = _if;
     this._if.rdreq = 0;
     this._if.wrreq = 0;
@@ -174,6 +209,8 @@ class lifo_driver #(
   endtask
 
   task send();
+    this.drv2scb.put( this.trans );
+
     case( this.trans.get_req_type() )
       REQ_EMPTY:
         begin
@@ -217,28 +254,85 @@ class lifo_driver #(
         this.send();
       end
   endtask
+endclass
 
+/////////////////////////////////////////////////////////////////////
+// monitor
+/////////////////////////////////////////////////////////////////////
+class lifo_monitor #(type T);
+  local mailbox #( T ) mon2scb;
+  local virtual lifo_if _if;
+
+  function new(virtual lifo_if _if, mailbox #( T ) mon2scb);
+    this.mon2scb   = mon2scb;
+    this._if       = _if;
+  endfunction
+
+  task run(int time_cycles);
+    T tr;
+    while(time_cycles)
+      begin
+        time_cycles = time_cycles - 1;
+        @( this._if.cb );
+        tr = new(_if);
+        mon2scb.put(tr);
+      end
+  endtask
 endclass
 
 
+/////////////////////////////////////////////////////////////////////
+// scoreboard
+/////////////////////////////////////////////////////////////////////
+class lifo_scoreboard #(
+  type T_from_generator,
+  type T_from_monitor
+);
+  local mailbox #( T_from_generator ) gen2scb;
+  local mailbox #( T_from_monitor   ) mon2scb;
+
+  function new( mailbox #( T_from_generator ) gen2scb,
+                mailbox #( T_from_monitor   ) mon2scb);
+    this.gen2scb = gen2scb;
+    this.mon2scb = mon2scb;
+  endfunction
+endclass
 
 
+/////////////////////////////////////////////////////////////////////
+// enviroment with part-phase structure
+/////////////////////////////////////////////////////////////////////
+class lifo_enviroment #( 
+  type T_from_generator, 
+  type T_from_monitor
+);
+  local lifo_generator  #( T_from_generator                 ) gen;
+  local lifo_driver     #( T_from_generator                 ) drv;
+  local lifo_monitor    #(                   T_from_monitor ) mon;
+  local lifo_scoreboard #( T_from_generator, T_from_monitor ) scb;
+  
+  mailbox #( T_from_generator   ) gen2drv;
+  mailbox #( T_from_generator   ) drv2scb;
+  mailbox #( T_from_monitor     ) mon2scb;
+  
+  
+  task build(virtual lifo_if _if);
+    gen2drv = new();
+    drv2scb = new();
+    mon2scb = new();
 
+    gen = new(      gen2drv          );
+    drv = new( _if, gen2drv, drv2scb );
+    mon = new( _if,          mon2scb );
+    scb = new(      drv2scb, mon2scb );
+  endtask
 
+  task run(test_case _test);
+    gen.generate_test(_test);
+    drv.run();
+  endtask
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+endclass
 
 
 module lifo_tb #(
@@ -291,34 +385,22 @@ module lifo_tb #(
     .usedw_o        ( _if.usedw        )
   );
 
+  task reset();
+    srst <= 1'b1;
+    ##1;
+    srst <= 1'b0;
+  endtask
+
   initial
     begin
+      lifo_enviroment #(trans_from_generator, trans_from_monitor) env;
+      env = new();
+      env.build(_if);
+      reset();
+      
+      env.run(SOME_RW);
 
-
-      mailbox #( trans_from_gen ) gen2drv;
-
-      lifo_generator #( trans_from_gen ) gen;
-      lifo_driver    #( trans_from_gen ) drv;
-      gen2drv = new();
-      gen = new(      gen2drv );
-      drv = new( _if, gen2drv );
-
-
-      srst <= 1;
-      ##1;
-      srst <= 0;
-
-
-
-      fork      
-        gen.generate_new(20, REQ_WRITE);
-        gen.generate_new(20, REQ_READ);
-        drv.run();
-      join_none
-
-
-
-      ##100;
+      ##5;      
       $stop();
     end
 
