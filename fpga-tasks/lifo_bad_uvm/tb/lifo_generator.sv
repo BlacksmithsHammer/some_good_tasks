@@ -43,6 +43,18 @@ class lifo_generator #(
         generate_stimulus(1, REQ_EMPTY);
   endtask
 
+  task plain_rw(int chance, int test_len);
+    int  i = 0;
+    while( i < test_len )
+      if( $urandom_range(99, 0) < chance )
+        begin
+          generate_stimulus(1, REQ_RW);
+          i = i + 1;
+        end
+      else
+        generate_stimulus(1, REQ_EMPTY);
+  endtask
+
   // test_len - very abstract parameter
   task generate_test( test_case _test    = SOME_RW, 
                       int       chance   = 50, 
@@ -53,6 +65,8 @@ class lifo_generator #(
           //generate_stimulus(5, REQ_EMPTY);
           plain_write(chance, test_len);
           plain_read(chance, test_len);
+          generate_stimulus(5, REQ_EMPTY);
+          plain_rw(chance, test_len);
         end
       FULL_RW:
         begin
