@@ -11,14 +11,10 @@ class lifo_driver #(
     this.gen2drv   = gen2drv;
     this.drv2scb   = drv2scb;
     this._if       = _if;
-    this._if.rdreq = 0;
-    this._if.wrreq = 0;
-    this._if.data  = $urandom_range(2**32-1, 0);
+    this._if.rdreq <= 0;
+    this._if.wrreq <= 0;
+    this._if.data  <= $urandom_range(2**32-1, 0);
   endfunction
-
-  task update(T trans);
-    this.trans = trans;
-  endtask
 
   task send();
     this.drv2scb.put( this.trans );
@@ -62,7 +58,7 @@ class lifo_driver #(
     while (this.gen2drv.num())
       begin
         this.gen2drv.get(_trans);
-        this.update(_trans);
+        this.trans = _trans;
         this.send();
       end
   endtask

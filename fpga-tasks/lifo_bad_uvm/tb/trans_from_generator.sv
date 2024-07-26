@@ -1,15 +1,15 @@
 class trans_from_generator #(
   parameter int DWIDTH = 16
 );
-  local int req_type;
+  local rq_code req_type;
   local logic [DWIDTH-1:0] word;
   
-  function new(int req_type, word);
+  function new(rq_code req_type, logic [DWIDTH-1:0] word);
     this.req_type = req_type;
     this.word     = word;
   endfunction
 
-  function int get_req_type();
+  function rq_code get_req_type();
     return this.req_type;
   endfunction
 

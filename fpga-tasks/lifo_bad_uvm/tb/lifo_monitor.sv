@@ -7,14 +7,13 @@ class lifo_monitor #(type T);
     this._if       = _if;
   endfunction
 
-  task run(int time_cycles);
+  task run();
     T tr;
-    while(time_cycles)
+    while(1)
       begin
-        time_cycles = time_cycles - 1;
-        @( this._if.cb );
         tr = new(_if);
         mon2scb.put(tr);
+        @( this._if.cb );
       end
   endtask
 endclass

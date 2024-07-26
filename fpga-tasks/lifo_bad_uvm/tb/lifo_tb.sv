@@ -1,10 +1,11 @@
 import lifo_package::*;
 
 module lifo_tb #(
-  parameter int DWIDTH        = 16,
-  parameter int AWIDTH        = 8,
-  parameter int ALMOST_FULL   = 2,
-  parameter int ALMOST_EMPTY  = 2
+  parameter test_case TEST_CASE       = SOME_RW,
+  parameter int       DWIDTH          = 16,
+  parameter int       AWIDTH          = 8,
+  parameter int       ALMOST_FULL     = 2,
+  parameter int       ALMOST_EMPTY    = 2
 );
   
   bit clk;
@@ -61,12 +62,40 @@ module lifo_tb #(
       lifo_enviroment #(trans_from_generator, trans_from_monitor) env;
       env = new();
       env.build(_if);
-      
       reset();
-      
-      env.run(SOME_RW);
 
-      ##5;
+      case (TEST_CASE)
+        SOME_RW:
+          begin
+            env.run(SOME_RW, 100, 10, "SMALL TEST");
+          end
+
+        FULL_RW:
+          begin
+            // third parameter ignored
+            env.run(FULL_RW, 100, 0, "WRITE FULL AND READ FULL");
+          end
+        
+        OVER_RW:
+          begin
+            // third parameter ignored
+            env.run(OVER_RW, 100, 0, "WRITE MORE THAN MAX SIZE AND READ TOO");
+          end
+        
+        BIG_TEST:
+          begin
+            //?
+          end
+
+        default:
+          begin
+            $error("UNEXPECTED TEST");
+          end
+      endcase
+
+      
+
+
       $stop();
     end
 
