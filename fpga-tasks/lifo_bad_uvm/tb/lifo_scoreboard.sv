@@ -53,23 +53,13 @@ class lifo_scoreboard #(
 
         if( t_gen.get_req_type() == REQ_EMPTY)
           begin
-            if( last_word !== t_mon.get_word() )
-              `SHOW_WRONG_SIGNALS(last_word, t_mon.get_word(), "wrong q_o");
+            // empty
           end
 
         if( t_gen.get_req_type() == REQ_READ )
           begin
-            if( lifo_queue.size() == 0 )
-              begin
-                if( last_word != t_mon.get_word() )
-                  `SHOW_WRONG_SIGNALS(last_word, t_mon.get_word(), "wrong q_o");
-              end
-            else
-              begin
-                last_word = lifo_queue.pop_back();
-                if( last_word != t_mon.get_word() )
-                  `SHOW_WRONG_SIGNALS(last_word, t_mon.get_word(), "wrong q_o");
-              end   
+            if( lifo_queue.size() != 0 )
+              last_word = lifo_queue.pop_back(); 
           end
 
         if( t_gen.get_req_type() == REQ_WRITE )
@@ -81,23 +71,19 @@ class lifo_scoreboard #(
         if( t_gen.get_req_type() == REQ_RW)
           begin
             // read part
-            if( lifo_queue.size() == 0 )
-              begin
-                if( last_word != t_mon.get_word() )
-                  `SHOW_WRONG_SIGNALS(last_word, t_mon.get_word(), "wrong q_o");
-              end
-            else
-              begin
-                last_word = lifo_queue.pop_back();
-                if( last_word != t_mon.get_word() )
-                  `SHOW_WRONG_SIGNALS(last_word, t_mon.get_word(), "wrong q_o");
-              end
+            if( lifo_queue.size() != 0 )
+              last_word = lifo_queue.pop_back();
+
             // write part
-            if( lifo_queue.size() < 2**AWIDTH )
+            // 2**AWIDTH __-1__ - to DONT write after read in ONE cycle
+            // if before read LIFO full
+            if( lifo_queue.size() < 2**AWIDTH - 1 )
               lifo_queue.push_back(t_gen.get_word());
           end
 
-
+        if( last_word !== t_mon.get_word() )
+          `SHOW_WRONG_SIGNALS(last_word, t_mon.get_word(), 
+                               "wrong q_o");
         
         if( (lifo_queue.size() >  ALMOST_EMPTY ) === ( t_mon.get_almost_empty() ) )
           `SHOW_WRONG_SIGNALS(!t_mon.get_almost_empty(), 
@@ -115,14 +101,14 @@ class lifo_scoreboard #(
                                "wrong usedw_o");
 
         if( lifo_queue.size() == 0 && !t_mon.get_empty() )
-           `SHOW_WRONG_SIGNALS(  t_mon.get_empty(), 
-                                !t_mon.get_empty(), 
-                                "wrong empty_o");
+           `SHOW_WRONG_SIGNALS( t_mon.get_empty(), 
+                               !t_mon.get_empty(), 
+                               "wrong empty_o");
         
         if( lifo_queue.size() == 2**AWIDTH && !t_mon.get_full() )
           `SHOW_WRONG_SIGNALS(  t_mon.get_full(), 
                                !t_mon.get_full(), 
-                               "wrong empty_o");
+                               "wrong full_o");
 
         @( this._if.cb );
       end

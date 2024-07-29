@@ -84,7 +84,9 @@ module lifo_tb #(
         
         BIG_TEST:
           begin
-            //?
+             // third parameter VERY useful - this is a number 
+             // of (very) randomized tests
+             env.run(BIG_TEST, 100, 5, "DEEP TEST");
           end
 
         default:
@@ -92,9 +94,6 @@ module lifo_tb #(
             $error("UNEXPECTED TEST");
           end
       endcase
-
-      
-
 
       $stop();
     end
