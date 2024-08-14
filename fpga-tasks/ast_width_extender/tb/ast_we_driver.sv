@@ -7,10 +7,10 @@ class ast_we_driver #(
   parameter DATA_OUT_W  = 256,
   parameter EMPTY_OUT_W = $clog2(DATA_OUT_W/8) ?  $clog2(DATA_OUT_W/8) : 1
 );
-  local virtual ast_we_if     _if;
-  local T                     trans;
-  local mailbox #( T )        gen2drv;
-  local mailbox #( T )        drv2scb;
+  local virtual ast_we_if  _if;
+  local T                  trans;
+  local mailbox #( T )     gen2drv;
+  local mailbox #( T )     drv2scb;
 
   function new( virtual ast_we_if _if,
                 mailbox #( T ) gen2drv,
@@ -121,8 +121,8 @@ class ast_we_driver #(
     this._if.sink_empty         <= $urandom_range(2**32 - 1, 0);
     this._if.sink_channel       <= $urandom_range(2**32 - 1, 0);
 
-    this._if.source_ready       <= 1'b0;
-    $display("end send at ", $time);
+    // this._if.source_ready       <= 1'b0;
+    // $display("end send at ", $time);
   endtask
 
   task run();

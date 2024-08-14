@@ -13,8 +13,6 @@ class ast_we_generator #(
   endfunction
 
   
-
-  
   task generate_test( test_case _test    = TEST_MVP, 
                       int       chance   = 50, 
                       int       test_len = 10);
@@ -23,14 +21,14 @@ class ast_we_generator #(
     case( _test )
       TEST_MVP:
         begin
-          for(int i = 16; i <= 16; i++)
+          for(int i = 15; i <= 15; i++)
             begin
               tr = new( $urandom_range(2**32 - 1, 0), 
                         i,
-                        20,
+                        100,
                         100);
-              $display(tr.get_channel(), tr.get_size_of_packet());
               this.gen2drv.put( tr );
+              $display(tr.get_channel(), tr.get_size_of_packet());
             end
         end
       

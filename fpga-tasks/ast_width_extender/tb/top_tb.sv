@@ -106,7 +106,7 @@ module top_tb #(
 
 
 
-      ##10;
+      ##100;
       $stop();
     end
 
