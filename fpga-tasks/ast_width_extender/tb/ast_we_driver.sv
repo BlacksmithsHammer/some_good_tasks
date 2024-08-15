@@ -9,6 +9,7 @@ class ast_we_driver #(
 );
   local virtual ast_we_if  _if;
   local T                  trans;
+  // local T                  after_drv_tr;
   local mailbox #( T )     gen2drv;
   local mailbox #( T )     drv2scb;
 
@@ -20,10 +21,6 @@ class ast_we_driver #(
     this.drv2scb = drv2scb;
   endfunction
 
-  task get_next_packet();
-    this.gen2drv.get(this.trans);
-    this.drv2scb.put(this.trans);
-  endtask
 
   task fill_word(int type_filling);
     // fill with wrong data
@@ -120,6 +117,9 @@ class ast_we_driver #(
     this._if.sink_valid         <= 1'b0;
     this._if.sink_empty         <= $urandom_range(2**32 - 1, 0);
     this._if.sink_channel       <= $urandom_range(2**32 - 1, 0);
+    
+    // wait to check after-driver work
+
 
     // this._if.source_ready       <= 1'b0;
     // $display("end send at ", $time);
@@ -128,9 +128,43 @@ class ast_we_driver #(
   task run();
     while(this.gen2drv.num() > 0)
       begin
-        get_next_packet();
+        this.gen2drv.get(this.trans);
+        // save copy to scoreboard
+        // necessary if earlier than send because order 
+        // of packets in error situation destructed
+        this.drv2scb.put(this.trans.copy());
         send_packet();
       end
+    
+    //waiting to check results after driver
+    repeat(100)
+      @( this._if.cb );
+
+    ///////////////////////////////////////////////////
+    // demonstrate problems
+    ///////////////////////////////////////////////////
+    repeat(100)
+      begin
+        this._if.sink_startofpacket <= $urandom_range(1, 0);
+        this._if.sink_endofpacket   <= $urandom_range(1, 0);
+        // this._if.sink_valid         <= 1'b0;
+        this._if.sink_empty         <= $urandom_range(2**32 - 1, 0);
+        this._if.sink_channel       <= $urandom_range(2**32 - 1, 0);
+        this._if.source_ready       <= $urandom_range(1, 1);
+        @( this._if.cb );
+      end
+    
+    repeat(100)
+      begin
+        this._if.sink_startofpacket <= $urandom_range(1, 0);
+        this._if.sink_endofpacket   <= $urandom_range(1, 0);
+        // this._if.sink_valid         <= 1'b0;
+        this._if.sink_empty         <= $urandom_range(2**32 - 1, 0);
+        this._if.sink_channel       <= $urandom_range(2**32 - 1, 0);
+        this._if.source_ready       <= $urandom_range(1, 0);
+        @( this._if.cb );
+      end
+    ///////////////////////////////////////////////////
   endtask 
 
 endclass

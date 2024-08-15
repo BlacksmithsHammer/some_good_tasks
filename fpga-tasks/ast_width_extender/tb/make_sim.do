@@ -9,7 +9,7 @@ vsim -novopt top_tb
 
 add log -r /*
 
-add    wave -radix hex -r /*
-delete wave            -r /top_tb/ast_we_ins/*
+add    wave -r /*
+# delete wave            -r /top_tb/ast_we_ins/*
 
-run 10000
+run -all

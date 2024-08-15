@@ -12,6 +12,8 @@ class ast_we_scoreboard #(
   local virtual ast_we_if  _if;
   local T tr_drv;
   local T tr_mon;
+  local int counter_packets_mon = 0;
+  local int counter_packets_drv = 0;
 
   function new( virtual ast_we_if _if,
                 mailbox #( T ) drv2scb,
@@ -21,6 +23,20 @@ class ast_we_scoreboard #(
     this.mon2scb = mon2scb;
   endfunction
 
+  task check_remaining_packets();
+    $display("driver sent %d packets", counter_packets_drv + this.drv2scb.num());
+    $display("monitor received %d packets", counter_packets_mon + this.mon2scb.num());
+    if( counter_packets_mon + this.mon2scb.num() != counter_packets_drv + this.drv2scb.num() )
+      begin
+        $display("PROBLEMS WITH PACKETS!");
+        // etc
+      end
+    else
+      begin
+        $display("ALL PACKETS RECEIVED: ", counter_packets_mon);
+      end
+  endtask
+
   task run();
     logic [7:0] last_byte_mon;
     logic [7:0] last_byte_drv;
@@ -28,7 +44,10 @@ class ast_we_scoreboard #(
     while(1)
       begin
         this.drv2scb.get(tr_drv);
+        counter_packets_drv = counter_packets_drv + 1;
         this.mon2scb.get(tr_mon);
+        counter_packets_mon = counter_packets_mon + 1;
+
         if( tr_drv.get_channel() != tr_mon.get_channel() )
           begin
             `SHOW_WRONG_SIGNALS(tr_drv.get_channel(),
@@ -41,6 +60,7 @@ class ast_we_scoreboard #(
             `SHOW_WRONG_SIGNALS(tr_drv.get_size_of_packet(),
                                 tr_mon.get_size_of_packet(),
                                 "SCOREBOARD: DIFFERENT BETWEEN PACKET SIZE");
+
           end
         else
           begin

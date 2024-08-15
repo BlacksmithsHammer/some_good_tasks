@@ -10,30 +10,43 @@ class ast_we_enviroment #(
   mailbox #( T ) gen2drv;
   mailbox #( T ) drv2scb;
   mailbox #( T ) mon2scb;
+
+  local virtual ast_we_if _if;
   
   
   task build(virtual ast_we_if _if);
-    gen2drv = new();
-    drv2scb = new();
-    mon2scb = new();
+    this._if = _if;
 
-    gen = new(      gen2drv          );
-    drv = new( _if, gen2drv, drv2scb );
-    mon = new( _if,          mon2scb );
-    scb = new( _if, drv2scb, mon2scb );
+    this.gen2drv = new(1);
+    this.drv2scb = new();
+    this.mon2scb = new();
+
+    gen = new(      this.gen2drv               );
+    drv = new( _if, this.gen2drv, this.drv2scb );
+    mon = new( _if,               this.mon2scb );
+    scb = new( _if, this.drv2scb, this.mon2scb );
   endtask
 
   task run( test_case _test, 
             string    label );
     $display("Test <%s> is running:", label);
-    gen.generate_test(_test);
+    // gen.generate_test(_test);
+
     fork
+      
+    join_none
+
+    $display("NEXT", $time);
+    
+    fork
+      gen.generate_test(_test);
       drv.run();
       mon.run();
       scb.run();
     join_any
-
-    // need to work monitor
+    $display("NEXT 2 ", $time);
+    // check for unexpected situations after end of driver stimulus
+    scb.check_remaining_packets();
     // disable fork;
   endtask
 

@@ -5,13 +5,13 @@ class ast_we_transaction #(
   parameter DATA_OUT_W  = 256,
   parameter EMPTY_OUT_W = $clog2(DATA_OUT_W/8) ?  $clog2(DATA_OUT_W/8) : 1
 );
-  local logic [CHANNEL_W-1:0] channel;
+  logic [CHANNEL_W-1:0] channel;
   // in bytes, not optimized but looks good
-  local logic [7:0] packet [$];
+  logic [7:0] packet [$];
   // chance of send for driver: [driver -> dut]
-  local int         chance_send;
+  int         chance_send;
   // chance of ready (signal) for driver: [dut -> monitor]
-  local int         chance_receive;
+  int         chance_receive;
 
   // packet size in bytes from 1 to 65536
   function new(logic [CHANNEL_W-1:0] channel,
@@ -24,6 +24,21 @@ class ast_we_transaction #(
 
     this.chance_send    = chance_send;
     this.chance_receive = chance_receive;
+  endfunction
+
+  function ast_we_transaction #(
+    .DATA_IN_W   ( DATA_IN_W   ),
+    .EMPTY_IN_W  ( EMPTY_IN_W  ),
+    .CHANNEL_W   ( CHANNEL_W   ),
+    .DATA_OUT_W  ( DATA_OUT_W  ),
+    .EMPTY_OUT_W ( EMPTY_OUT_W )
+  ) copy();
+    copy = new(-1, -1, -1, -1);
+
+    copy.channel        = this.channel;
+    copy.packet         = this.packet;
+    copy.chance_send    = this.chance_send;
+    copy.chance_receive = this.chance_receive;
   endfunction
 
   function logic [7:0] get_next_byte();

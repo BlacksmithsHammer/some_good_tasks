@@ -1,6 +1,8 @@
 package ast_we_package;
   typedef enum { 
-   TEST_MVP
+    TEST_MVP,
+    TEST_EVERY_SIZE,
+    TEST_RANDOM_BIG
   } test_case;
 
   `include "macro.sv"

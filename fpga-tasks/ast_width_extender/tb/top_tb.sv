@@ -78,6 +78,15 @@ module top_tb #(
           begin
             env.run(TEST_MVP, "MVP CHECK");
           end
+        // TEST_EVERY_SIZE:
+        //   begin
+        //     env.run(TEST_EVERY_SIZE, "TEST EVERY SIZE OF PACKETS");
+        //   end
+
+        // TEST_RANDOM_BIG:
+        //   begin
+        //     env.run(TEST_RANDOM_BIG, "BIG RANDOMIZED TEST TO MAX COVERAGE");
+        //   end
 
         default:
           begin
@@ -85,28 +94,6 @@ module top_tb #(
           end
       endcase
 
-
-
-
-
-      // _if.source_ready = 1'b1;
-      // _if.sink_channel = 1;
-      // _if.sink_valid = 1'b1;
-      // _if.sink_empty = 7;
-
-      // _if.sink_data = 64'h1a3b5c7d22224444;
-      // _if.sink_startofpacket = 1'b1;
-      // _if.sink_endofpacket   = 1'b0;
-      // ##1;
-      // _if.sink_startofpacket = 1'b0;
-      // ##100;
-      // _if.sink_endofpacket   = 1'b1;
-
-      
-
-
-
-      ##100;
       $stop();
     end
 

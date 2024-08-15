@@ -21,6 +21,7 @@ class ast_we_monitor #(
   endfunction
 
   task run();
+    // to debug or count/display firsts problems
     int have_problems_sof     = 0;
     int have_problems_eof     = 0;
     int have_problems_channel = 0;
@@ -86,7 +87,6 @@ class ast_we_monitor #(
                 @( this._if.cb );
               end
             
-            $display("size of packet: ", tr.get_size_of_packet());
             mon2scb.put(tr);
             // while(tr.get_size_of_packet() > 0)
             //   $display("%x", tr.get_next_byte());
