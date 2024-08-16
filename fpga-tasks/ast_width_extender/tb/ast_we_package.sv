@@ -1,7 +1,9 @@
 package ast_we_package;
   typedef enum { 
-    TEST_MVP,
-    TEST_EVERY_SIZE,
+    FOUND_PROBLEM_CHANNEL,
+    TEST_PLAIN,
+    TEST_PLAIN_RANDOMIZED,
+    TEST_CHANNELS,
     TEST_RANDOM_BIG
   } test_case;
 

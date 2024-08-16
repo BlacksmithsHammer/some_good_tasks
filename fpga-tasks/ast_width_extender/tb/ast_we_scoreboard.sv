@@ -53,6 +53,7 @@ class ast_we_scoreboard #(
             `SHOW_WRONG_SIGNALS(tr_drv.get_channel(),
                                 tr_mon.get_channel(),
                                 "SCOREBOARD: DIFFERENT CHANNEL");
+            //$stop();
           end
 
         if( tr_drv.get_size_of_packet() != tr_mon.get_size_of_packet() )
@@ -60,16 +61,17 @@ class ast_we_scoreboard #(
             `SHOW_WRONG_SIGNALS(tr_drv.get_size_of_packet(),
                                 tr_mon.get_size_of_packet(),
                                 "SCOREBOARD: DIFFERENT BETWEEN PACKET SIZE");
-
+            //$stop();
           end
         else
           begin
+            $stop();
             while(tr_drv.get_size_of_packet() > 0)
               begin
                 last_byte_mon = tr_mon.get_next_byte();
                 last_byte_drv = tr_drv.get_next_byte();
 
-                if(last_byte_mon != last_byte_drv)
+                if(last_byte_mon !== last_byte_drv)
                   `SHOW_WRONG_SIGNALS(last_byte_drv,
                                       last_byte_mon,
                                       "SCOREBOARD: DIFFERENT BETWEEN DATA VALUE");

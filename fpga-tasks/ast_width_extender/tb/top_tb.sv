@@ -1,7 +1,7 @@
 import ast_we_package::*;
 
 module top_tb #(
-  parameter test_case TEST_CASE   = TEST_MVP,
+  parameter test_case TEST_CASE   = TEST_PLAIN,
   parameter           DATA_IN_W   = 64,
   parameter           EMPTY_IN_W  = $clog2(DATA_IN_W/8) ?  $clog2(DATA_IN_W/8) : 1,
   parameter           CHANNEL_W   = 10,
@@ -74,19 +74,30 @@ module top_tb #(
       reset();
 
       case (TEST_CASE)
-        TEST_MVP:
+        FOUND_PROBLEM_CHANNEL:
           begin
-            env.run(TEST_MVP, "MVP CHECK");
+            env.run(FOUND_PROBLEM_CHANNEL, "CHANNEL PROBLEM");
           end
-        // TEST_EVERY_SIZE:
-        //   begin
-        //     env.run(TEST_EVERY_SIZE, "TEST EVERY SIZE OF PACKETS");
-        //   end
 
-        // TEST_RANDOM_BIG:
-        //   begin
-        //     env.run(TEST_RANDOM_BIG, "BIG RANDOMIZED TEST TO MAX COVERAGE");
-        //   end
+        TEST_PLAIN:
+          begin
+            env.run(TEST_PLAIN, "SMALL TEST");
+          end
+        
+        TEST_PLAIN_RANDOMIZED:
+          begin
+            env.run(TEST_PLAIN_RANDOMIZED, "IMPROVED SMALL TEST");
+          end
+        
+        TEST_CHANNELS:
+          begin
+            env.run(TEST_CHANNELS, "CHECK CORRECT OF CHANNELS");
+          end
+        
+        TEST_RANDOM_BIG:
+          begin
+            env.run(TEST_RANDOM_BIG, "BIG RANDOMIZED TEST WITH GOOD COVERAGE");
+          end
 
         default:
           begin
