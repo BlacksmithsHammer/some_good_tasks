@@ -56,7 +56,7 @@ class ast_dmx_enviroment #(
 
     this.gen2drv = new(1);
     this.drv2scb = new();
-    // this.mon2scb = new();
+    this.mon2scb = new();
 
     gen = new(                          this.gen2drv                             );
     drv = new( _sink_if, _source_if,    this.gen2drv, this.drv2scb               );

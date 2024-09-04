@@ -78,12 +78,12 @@ class ast_dmx_driver #(
       begin
         if( $urandom_range(99, 0) < this.trans.get_chance_receive() )
           begin
-            for( int i = 0; i < TX_DIR; i++)
+            for( int i = 0; i < TX_DIR; i++ )
               this._source_if[i].ready <= 1'b1;
           end
         else
           begin
-            for( int i = 0; i < TX_DIR; i++)
+            for( int i = 0; i < TX_DIR; i++ )
               this._source_if[i].ready <= 1'b0;
           end
 
@@ -143,6 +143,7 @@ class ast_dmx_driver #(
       end
 
     fill_word(-1);
+    this._sink_if.dir           <= $urandom_range(2**32 - 1, 0);
     this._sink_if.startofpacket <= $urandom_range(1, 0);
     this._sink_if.endofpacket   <= $urandom_range(1, 0);
     this._sink_if.valid         <= 1'b0;
