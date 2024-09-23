@@ -11,7 +11,7 @@ class ast_dmx_enviroment #(
   local ast_dmx_generator  #( T ) gen;
   local ast_dmx_driver     #( T ) drv;
   local ast_dmx_monitor    #( T ) mon;
-//   local ast_dmx_scoreboard #( T ) scb;
+  local ast_dmx_scoreboard #( T ) scb;
   
   mailbox #( T ) gen2drv;
   mailbox #( T ) drv2scb;
@@ -61,7 +61,7 @@ class ast_dmx_enviroment #(
     gen = new(                          this.gen2drv                             );
     drv = new( _sink_if, _source_if,    this.gen2drv, this.drv2scb               );
     mon = new( _sink_if, _source_if,                                this.mon2scb );
-    // scb = new( _sink_if, _source_if, this.drv2scb, this.mon2scb );
+    scb = new(                                        this.drv2scb, this.mon2scb );
   endtask
 
   task run( test_case _test, 
@@ -72,14 +72,13 @@ class ast_dmx_enviroment #(
       gen.generate_test(_test);
       drv.run();
       mon.run();
-      //scb.run();
+      scb.run();
     join_any
 
 
     #1000;
+    scb.check_remaining_packets();
     $stop();
-    // check for unexpected situations after end of driver stimulus
-    // scb.check_remaining_packets();
     // disable fork;
   endtask
 

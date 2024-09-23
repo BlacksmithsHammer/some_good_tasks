@@ -1,7 +1,7 @@
 import ast_dmx_package::*;
 
 module top_tb #(
-  parameter test_case TEST_CASE   = MVP,
+  parameter test_case TEST_CASE   = ONE_BYTE_RAND_READY,
 
   parameter int DATA_WIDTH    = 64,
   parameter int CHANNEL_WIDTH = 8,
@@ -107,14 +107,26 @@ module top_tb #(
       reset();
 
       case (TEST_CASE)
-        MVP:
+        ONE_BYTE:
           begin
-            env.run(MVP, "CHECK MVP");
+            env.run(ONE_BYTE, "CHECK ONE BYTE");
+          end
+
+
+        ONE_BYTE_RAND_READY:
+          begin
+            env.run(ONE_BYTE_RAND_READY, "CHECK ONE BYTE RANDOM READY");
+          end
+          
+        TEST:
+          begin
+            env.run(TEST, "CHECK TEST");
           end
 
         default:
           begin
             $error("UNEXPECTED TEST");
+            $stop();
           end
       endcase
     end  

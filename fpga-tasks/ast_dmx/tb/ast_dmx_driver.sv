@@ -49,7 +49,7 @@ class ast_dmx_driver #(
       begin
         for(int i = 0; i < DATA_WIDTH/8; i++)
           begin
-            this._sink_if.cb.data[i*8 +: 8] <= $urandom_range(255, 0);
+            this._sink_if.cb.data[i*8 +: 8] <= 'x;
           end
       end
 
@@ -67,7 +67,7 @@ class ast_dmx_driver #(
             if( this.trans.get_size_of_packet() > 0 )
               this._sink_if.cb.data[i*8 +: 8] <= this.trans.get_next_byte();
             else
-              this._sink_if.cb.data[i*8 +: 8] <= $urandom_range(255, 0);
+              this._sink_if.cb.data[i*8 +: 8] <= 'x;
           end
       end
   endtask
@@ -91,7 +91,7 @@ class ast_dmx_driver #(
           begin
             if( trans.get_size_of_packet() > DATA_WIDTH/8 )
               begin
-                this._sink_if.cb.empty <= $urandom_range(2**32 - 1, 0);
+                this._sink_if.cb.empty <= 'x;
               end
             else
               if( trans.get_size_of_packet() == DATA_WIDTH/8 )
@@ -133,24 +133,26 @@ class ast_dmx_driver #(
           begin
             fill_word(-1);
             this._sink_if.cb.dir           <= $urandom_range(2**32 - 1, 0);
-            this._sink_if.cb.startofpacket <= $urandom_range(1, 0);
-            this._sink_if.cb.endofpacket   <= $urandom_range(1, 0);
+            this._sink_if.cb.startofpacket <=  'x;
+            this._sink_if.cb.endofpacket   <=  'x;
             this._sink_if.cb.valid         <= 1'b0;
-            this._sink_if.cb.empty         <= $urandom_range(2**32 - 1, 0);
-            this._sink_if.cb.channel       <= $urandom_range(2**32 - 1, 0);
+            this._sink_if.cb.empty         <=  'x;
+            this._sink_if.cb.channel       <=  'x;
           end
         @( this._sink_if.cb );
       end
 
+      
     fill_word(-1);
     this._sink_if.cb.dir           <= $urandom_range(2**32 - 1, 0);
-    this._sink_if.cb.startofpacket <= $urandom_range(1, 0);
-    this._sink_if.cb.endofpacket   <= $urandom_range(1, 0);
+    this._sink_if.cb.startofpacket <=  'x;
+    this._sink_if.cb.endofpacket   <=  'x;
     this._sink_if.cb.valid         <= 1'b0;
-    this._sink_if.cb.empty         <= $urandom_range(2**32 - 1, 0);
-    this._sink_if.cb.channel       <= $urandom_range(2**32 - 1, 0);
-    // wait to check after-driver work
+    this._sink_if.cb.empty         <=  'x;
+    this._sink_if.cb.channel       <=  'x;
 
+    repeat(this.trans.get_pause())
+      @( this._sink_if.cb );
 
     // this._if.source_ready       <= 1'b0;
     // $display("end send at ", $time);

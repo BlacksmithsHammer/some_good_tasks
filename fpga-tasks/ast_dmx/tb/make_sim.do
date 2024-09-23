@@ -5,7 +5,7 @@ vlog -sv ./ast_dmx_if.sv
 vlog -sv ./ast_dmx_package.sv
 vlog -sv ./top_tb.sv
 
-vsim -novopt top_tb
+vsim -voptargs="+acc" -suppress 3839 top_tb
 
 add log -r /*
 

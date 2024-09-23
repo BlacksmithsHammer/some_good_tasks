@@ -15,18 +15,23 @@ class ast_dmx_transaction #(
   int         chance_send;
   // chance of ready (signal) for driver: [dut -> monitor]
   int         chance_receive;
+  // len of pause after send in clocks
+  int         pause_after = 0;
+
 
   // packet size in bytes from 1 to 65536
   function new(logic [CHANNEL_WIDTH-1:0] channel,
                int                       dir,
                int                       packet_size,
                int                       chance_send,
-               int                       chance_receive);
+               int                       chance_receive,
+               int                       pause_after);
     this.dir     = dir;
     this.channel = channel;
     for(int i = 0; i < packet_size; i++)
       this.packet.push_back($urandom_range(255, 0));
 
+    this.pause_after    = pause_after;
     this.chance_send    = chance_send;
     this.chance_receive = chance_receive;
   endfunction
@@ -38,7 +43,7 @@ class ast_dmx_transaction #(
     .TX_DIR        ( TX_DIR        ),
     .DIR_SEL_WIDTH ( DIR_SEL_WIDTH )
   ) copy();
-    copy = new(-1, -1, -1, -1, -1);
+    copy = new(-1, -1, -1, -1, -1, -1);
     copy.dir            = this.dir;
     copy.channel        = this.channel;
     copy.packet         = this.packet;
@@ -55,6 +60,10 @@ class ast_dmx_transaction #(
   task push_next_byte(logic [7:0] new_byte);
     this.packet.push_back(new_byte);
   endtask
+
+  function int get_pause();
+    return this.pause_after;
+  endfunction
 
   function int get_size_of_packet();
     return this.packet.size();

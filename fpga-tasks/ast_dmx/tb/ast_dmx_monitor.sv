@@ -61,7 +61,7 @@ class ast_dmx_monitor #(
 
         if( _source_if.cbo.valid === 1'b1 )
           begin
-            tr = new(_source_if.cbo.channel, ind_dir, 0, -1, -1);
+            tr = new(_source_if.cbo.channel, ind_dir, 0, -1, -1, -1);
             while(1)
               begin
                 if( _source_if.cbo.valid === 1'b1 )
@@ -106,7 +106,8 @@ class ast_dmx_monitor #(
 
                 @(_source_if.cbo);
               end
-            $display("Dir %0d got packet at %d", ind_dir, $time);
+            //$display("Dir %0d got packet at %d", ind_dir, $time);
+            $display("Got packet with size=%d", tr.get_size_of_packet());
             this.mon2scb.put(tr);
           end
       end

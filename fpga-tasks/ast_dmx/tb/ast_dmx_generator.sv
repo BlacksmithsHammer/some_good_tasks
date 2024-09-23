@@ -22,6 +22,7 @@ class ast_dmx_generator #(
                             int range_channel_to,
                             int range_dir_from, // range for dir channel of transaction
                             int range_dir_to,
+                            int pause_after,
                             T tr);
     for(int i = size_from; i <= size_to; i++)
       begin
@@ -29,29 +30,72 @@ class ast_dmx_generator #(
                   $urandom_range(range_dir_to, range_dir_from),
                   i,
                   $urandom_range(chance_to, chance_from),
-                  $urandom_range(chance_to, chance_from));
+                  $urandom_range(chance_to, chance_from),
+                  pause_after);
         this.gen2drv.put( tr );
       end
   endtask
 
-  task generate_test( test_case _test = TEST_PLAIN);
+  task generate_test( test_case _test );
     T tr;
 
     case( _test )
-      MVP:
+      ONE_BYTE:
         begin
           range_size_gen_plain(
             100, 100,
-            18, 20,
+            1, 1,
             0, 2**32-1,
-            0, TX_DIR - 1,
+            0, 0,
+            0,
+            tr
+          );
+
+          range_size_gen_plain(
+            100, 100,
+            1, 1,
+            0, 2**32-1,
+            1, 1,
+            0,
+            tr
+          );
+
+          range_size_gen_plain(
+            100, 100,
+            1, 1,
+            0, 2**32-1,
+            2, 2,
+            0,
+            tr
+          );
+
+          range_size_gen_plain(
+            100, 100,
+            1, 1,
+            0, 2**32-1,
+            3, 3,
+            0,
             tr
           );
         end
     
-      TEST_PLAIN:
+      ONE_BYTE_RAND_READY:
         begin
+          for (int i = 0; i < 50; i++)
+            range_size_gen_plain(
+              50, 50,
+              1, 1,
+              0, 2**32-1,
+              0, TX_DIR-1,
+              0,
+              tr
+            );
+
         end
+
+      //TEST_PLAIN:
+      //  begin
+      //  end
 
       default:
         begin
