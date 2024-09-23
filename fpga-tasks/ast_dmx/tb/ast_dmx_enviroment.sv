@@ -74,7 +74,10 @@ class ast_dmx_enviroment #(
       mon.run();
       //scb.run();
     join_any
-    
+
+
+    #1000;
+    $stop();
     // check for unexpected situations after end of driver stimulus
     // scb.check_remaining_packets();
     // disable fork;

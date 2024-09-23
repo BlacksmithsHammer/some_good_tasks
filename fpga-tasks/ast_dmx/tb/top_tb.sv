@@ -117,9 +117,14 @@ module top_tb #(
             $error("UNEXPECTED TEST");
           end
       endcase
-
-      ##100;
-      $stop();
     end  
     
+
+// event clk_pos_event;
+// initial
+//   begin
+//     forever
+//     @( posedge clk )
+//     ->clk_pos_event;
+//   end
 endmodule

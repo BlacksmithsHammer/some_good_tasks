@@ -9,10 +9,6 @@ interface ast_dmx_if #(
   input clk
 );
 
-  default clocking cb
-    @( posedge clk );
-  endclocking
-  
 
   logic [DIR_SEL_WIDTH - 1 : 0] dir;
   
@@ -23,5 +19,32 @@ interface ast_dmx_if #(
   logic [EMPTY_WIDTH   - 1 : 0] empty;
   logic [CHANNEL_WIDTH - 1 : 0] channel;
   logic                         ready;
+  
+
+
+  default clocking cb
+    @( posedge clk );
+    output  dir;
+    output  data;
+    output  startofpacket;
+    output  endofpacket;
+    output  valid;
+    output  empty;
+    output  channel;
+    input   ready;
+  endclocking
+
+
+  clocking cbo
+    @( posedge clk );
+    input  dir;
+    input  data;
+    input  startofpacket;
+    input  endofpacket;
+    input  valid;
+    input  empty;
+    input  channel;
+    output ready;
+  endclocking
   
 endinterface

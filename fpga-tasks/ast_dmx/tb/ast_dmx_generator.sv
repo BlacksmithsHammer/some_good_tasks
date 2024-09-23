@@ -59,7 +59,6 @@ class ast_dmx_generator #(
         end
 
     endcase
-    
     // fix for work in fork-thread
     #1000000000;
 

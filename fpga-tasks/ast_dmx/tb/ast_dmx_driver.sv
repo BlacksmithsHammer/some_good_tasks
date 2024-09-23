@@ -49,7 +49,7 @@ class ast_dmx_driver #(
       begin
         for(int i = 0; i < DATA_WIDTH/8; i++)
           begin
-            this._sink_if.data[i*8 +: 8] <= $urandom_range(255, 0);
+            this._sink_if.cb.data[i*8 +: 8] <= $urandom_range(255, 0);
           end
       end
 
@@ -65,9 +65,9 @@ class ast_dmx_driver #(
         for(int i = 0; i < DATA_WIDTH/8; i++)
           begin
             if( this.trans.get_size_of_packet() > 0 )
-              this._sink_if.data[i*8 +: 8] <= this.trans.get_next_byte();
+              this._sink_if.cb.data[i*8 +: 8] <= this.trans.get_next_byte();
             else
-              this._sink_if.data[i*8 +: 8] <= $urandom_range(255, 0);
+              this._sink_if.cb.data[i*8 +: 8] <= $urandom_range(255, 0);
           end
       end
   endtask
@@ -87,69 +87,68 @@ class ast_dmx_driver #(
               this._source_if[i].ready <= 1'b0;
           end
 
-        if( this._sink_if.ready === 1'b1 && $urandom_range(99, 0) < this.trans.get_chance_send() )
+        if( this._sink_if.cb.ready === 1'b1 && $urandom_range(99, 0) < this.trans.get_chance_send() )
           begin
             if( trans.get_size_of_packet() > DATA_WIDTH/8 )
               begin
-                this._sink_if.empty <= $urandom_range(2**32 - 1, 0);
+                this._sink_if.cb.empty <= $urandom_range(2**32 - 1, 0);
               end
             else
               if( trans.get_size_of_packet() == DATA_WIDTH/8 )
                 begin
-                  this._sink_if.empty <= '0;
+                  this._sink_if.cb.empty <= '0;
                 end
               else
                 begin
-                  this._sink_if.empty <= (DATA_WIDTH/8 - trans.get_size_of_packet());
+                  this._sink_if.cb.empty <= (DATA_WIDTH/8 - trans.get_size_of_packet());
                 end
 
             fill_word(1);
 
             if( need_send_sof == 1 )
               begin
-                this._sink_if.startofpacket <= 1'b1;
-                this._sink_if.dir           <= trans.get_dir();
+                this._sink_if.cb.startofpacket <= 1'b1;
+                this._sink_if.cb.dir           <= trans.get_dir();
                 need_send_sof = 0;
               end
             else
               begin
-                this._sink_if.startofpacket <= 1'b0;
-                this._sink_if.dir           <= $urandom_range(2**32 - 1, 0);
+                this._sink_if.cb.startofpacket <= 1'b0;
+                this._sink_if.cb.dir           <= $urandom_range(2**32 - 1, 0);
               end
 
             if( trans.get_size_of_packet() == 0 )
               begin
-                this._sink_if.endofpacket <= 1'b1;
+                this._sink_if.cb.endofpacket <= 1'b1;
               end
             else
               begin
-                this._sink_if.endofpacket <= 1'b0;
+                this._sink_if.cb.endofpacket <= 1'b0;
               end
 
-            this._sink_if.channel <= trans.get_channel();
-            this._sink_if.valid   <= 1'b1;
+            this._sink_if.cb.channel <= trans.get_channel();
+            this._sink_if.cb.valid   <= 1'b1;
           end
         else
           begin
             fill_word(-1);
-            this._sink_if.dir           <= $urandom_range(2**32 - 1, 0);
-            this._sink_if.startofpacket <= $urandom_range(1, 0);
-            this._sink_if.endofpacket   <= $urandom_range(1, 0);
-            this._sink_if.valid         <= 1'b0;
-            this._sink_if.empty         <= $urandom_range(2**32 - 1, 0);
-            this._sink_if.channel       <= $urandom_range(2**32 - 1, 0);
+            this._sink_if.cb.dir           <= $urandom_range(2**32 - 1, 0);
+            this._sink_if.cb.startofpacket <= $urandom_range(1, 0);
+            this._sink_if.cb.endofpacket   <= $urandom_range(1, 0);
+            this._sink_if.cb.valid         <= 1'b0;
+            this._sink_if.cb.empty         <= $urandom_range(2**32 - 1, 0);
+            this._sink_if.cb.channel       <= $urandom_range(2**32 - 1, 0);
           end
         @( this._sink_if.cb );
       end
 
     fill_word(-1);
-    this._sink_if.dir           <= $urandom_range(2**32 - 1, 0);
-    this._sink_if.startofpacket <= $urandom_range(1, 0);
-    this._sink_if.endofpacket   <= $urandom_range(1, 0);
-    this._sink_if.valid         <= 1'b0;
-    this._sink_if.empty         <= $urandom_range(2**32 - 1, 0);
-    this._sink_if.channel       <= $urandom_range(2**32 - 1, 0);
-    
+    this._sink_if.cb.dir           <= $urandom_range(2**32 - 1, 0);
+    this._sink_if.cb.startofpacket <= $urandom_range(1, 0);
+    this._sink_if.cb.endofpacket   <= $urandom_range(1, 0);
+    this._sink_if.cb.valid         <= 1'b0;
+    this._sink_if.cb.empty         <= $urandom_range(2**32 - 1, 0);
+    this._sink_if.cb.channel       <= $urandom_range(2**32 - 1, 0);
     // wait to check after-driver work
 
 
@@ -171,18 +170,6 @@ class ast_dmx_driver #(
     //waiting to check results after driver
     repeat(100)
       @( this._sink_if.cb );
-
-    ///////////////////////////////////////////////////
-    // demonstrate problems
-    ///////////////////////////////////////////////////
-    repeat(100)
-      begin
-      end
-    
-    repeat(100)
-      begin
-      end
-    ///////////////////////////////////////////////////
   endtask 
 
 endclass
