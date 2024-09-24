@@ -77,9 +77,11 @@ class ast_dmx_enviroment #(
 
 
     #1000;
+    disable fork;
     scb.check_remaining_packets();
-    $stop();
-    // disable fork;
+    scb.reset();
+    #100;
+
   endtask
 
 endclass

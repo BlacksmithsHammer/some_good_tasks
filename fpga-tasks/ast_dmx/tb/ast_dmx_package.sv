@@ -2,8 +2,9 @@ package ast_dmx_package;
   typedef enum {
     ONE_BYTE,
     ONE_BYTE_RAND_READY,
-    TEST
-    
+    MANY_BYTES_RAND_READY,
+    SWAP_DIRS_RAND_READY,
+    MAIN_TEST
   } test_case;
 
   `include "macro.sv"

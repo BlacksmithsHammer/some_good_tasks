@@ -37,6 +37,16 @@ class ast_dmx_scoreboard #(
       end
   endtask
 
+  task reset();
+    this.counter_packets_mon = 0;
+    this.counter_packets_drv = 0;
+
+
+    while (this.drv2scb.try_get(tr_drv)) begin end
+    while (this.mon2scb.try_get(tr_mon)) begin end
+
+  endtask
+
   task run();
     logic [7:0] last_byte_mon;
     logic [7:0] last_byte_drv;
@@ -58,6 +68,7 @@ class ast_dmx_scoreboard #(
 
         if( tr_drv.get_channel() != tr_mon.get_channel() )
           begin
+            $display("DIR: ", tr_drv.get_dir());
             `SHOW_WRONG_SIGNALS(tr_drv.get_channel(),
                                 tr_mon.get_channel(),
                                 "SCOREBOARD: DIFFERENT CHANNEL");
@@ -66,6 +77,7 @@ class ast_dmx_scoreboard #(
 
         if( tr_drv.get_size_of_packet() != tr_mon.get_size_of_packet() )
           begin
+            $display("DIR: ", tr_drv.get_dir());
             `SHOW_WRONG_SIGNALS(tr_drv.get_size_of_packet(),
                                 tr_mon.get_size_of_packet(),
                                 "SCOREBOARD: DIFFERENT BETWEEN PACKET SIZE");
@@ -79,9 +91,13 @@ class ast_dmx_scoreboard #(
 
 
             if(last_byte_mon !== last_byte_drv)
-              `SHOW_WRONG_SIGNALS(last_byte_drv,
+              begin
+                $display("DIR: ", tr_drv.get_dir());
+                `SHOW_WRONG_SIGNALS(last_byte_drv,
                                   last_byte_mon,
                                   "SCOREBOARD: DIFFERENT BETWEEN DATA VALUE");
+                break;
+              end
           end
 
       end

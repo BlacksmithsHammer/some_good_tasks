@@ -1,7 +1,7 @@
 import ast_dmx_package::*;
 
 module top_tb #(
-  parameter test_case TEST_CASE   = ONE_BYTE_RAND_READY,
+  parameter test_case TEST_CASE   = MANY_BYTES_RAND_READY,
 
   parameter int DATA_WIDTH    = 64,
   parameter int CHANNEL_WIDTH = 8,
@@ -112,15 +112,28 @@ module top_tb #(
             env.run(ONE_BYTE, "CHECK ONE BYTE");
           end
 
-
         ONE_BYTE_RAND_READY:
           begin
             env.run(ONE_BYTE_RAND_READY, "CHECK ONE BYTE RANDOM READY");
           end
-          
-        TEST:
+
+        MANY_BYTES_RAND_READY:
           begin
-            env.run(TEST, "CHECK TEST");
+            env.run(MANY_BYTES_RAND_READY, "CHECK MANY BYTES RANDOM READY");
+          end
+
+        SWAP_DIRS_RAND_READY:
+          begin
+            env.run(SWAP_DIRS_RAND_READY, "CHECK SWAP DIRS RANDOM READY");
+          end
+
+        MAIN_TEST:
+          begin
+            env.run(ONE_BYTE, "CHECK ONE BYTE");
+            env.run(ONE_BYTE_RAND_READY, "CHECK ONE BYTE RANDOM READY");
+            env.run(MANY_BYTES_RAND_READY, "CHECK MANY BYTES RANDOM READY");
+            env.run(SWAP_DIRS_RAND_READY, "CHECK SWAP DIRS RANDOM READY");
+            env.run(MAIN_TEST, "CHECK MAIN TEST");
           end
 
         default:
@@ -129,7 +142,12 @@ module top_tb #(
             $stop();
           end
       endcase
-    end  
+      
+      $display("END OF SIMULATION");
+      $stop();
+    end
+
+
     
 
 // event clk_pos_event;

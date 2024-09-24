@@ -58,16 +58,33 @@ class ast_dmx_monitor #(
     while(1)
       begin
         @(_source_if.cbo);
+        
+        if( $isunknown(_source_if.cbo.valid) )
+          begin
+            $display("DIR: ", ind_dir);
+            `SHOW_WRONG_SIGNALS(-1, 
+                                -1, 
+                                "MONITOR: source valid is X!");
+          end
 
         if( _source_if.cbo.valid === 1'b1 )
           begin
             tr = new(_source_if.cbo.channel, ind_dir, 0, -1, -1, -1);
             while(1)
               begin
+                if( $isunknown(_source_if.cbo.valid) )
+                  begin
+                    $display("DIR: ", ind_dir);
+                    `SHOW_WRONG_SIGNALS(-1, 
+                                        -1, 
+                                        "MONITOR: source valid is X!");
+                  end
+
                 if( _source_if.cbo.valid === 1'b1 )
                   begin
                     if( _source_if.cbo.channel !== tr.get_channel() )
                       begin
+                        $display("DIR: ", ind_dir);
                         `SHOW_WRONG_SIGNALS(tr.get_channel(), 
                                             _source_if.cbo.channel, 
                                             "MONITOR: source channel wrong");
@@ -76,6 +93,7 @@ class ast_dmx_monitor #(
                     if( _source_if.cbo.startofpacket === 1'b1 && have_sof == 1 )
                       begin
                         // if early get a sof in one packet
+                        $display("DIR: ", ind_dir);
                         `SHOW_WRONG_SIGNALS(0, 1, "MONITOR: source start_of_packet wrong");
                         // (?) break;
                       end
@@ -86,8 +104,10 @@ class ast_dmx_monitor #(
                       end
 
                     if( _source_if.cbo.endofpacket === 1'b1 && have_sof == 0 )
+                      begin
+                        $display("DIR: ", ind_dir);
                         `SHOW_WRONG_SIGNALS(0, 1, "MONITOR: source end_of_packet wrong");
-
+                      end
                     
                     if( _source_if.cbo.endofpacket === 1'b1 && have_sof == 1 )
                       begin
