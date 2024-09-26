@@ -41,6 +41,8 @@ class ast_dmx_monitor #(
     return mon2scb.num();
   endfunction
 
+
+
   task run_daemon_mon_if( 
     virtual ast_dmx_if #(
         .DATA_WIDTH    ( DATA_WIDTH    ),
@@ -51,6 +53,8 @@ class ast_dmx_monitor #(
     ) _source_if,
     int ind_dir );
 
+
+
     T tr;
     int have_sof = 0;
 
@@ -58,7 +62,7 @@ class ast_dmx_monitor #(
     while(1)
       begin
         @(_source_if.cbo);
-        
+
         if( $isunknown(_source_if.cbo.valid) )
           begin
             $display("DIR: ", ind_dir);
@@ -101,6 +105,8 @@ class ast_dmx_monitor #(
                     if( _source_if.cbo.startofpacket === 1'b1 && have_sof == 0 )
                       begin
                         have_sof = 1;
+
+
                       end
 
                     if( _source_if.cbo.endofpacket === 1'b1 && have_sof == 0 )

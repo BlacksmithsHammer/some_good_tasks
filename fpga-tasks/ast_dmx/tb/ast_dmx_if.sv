@@ -9,7 +9,6 @@ interface ast_dmx_if #(
   input clk
 );
 
-
   logic [DIR_SEL_WIDTH - 1 : 0] dir;
   
   logic [DATA_WIDTH    - 1 : 0] data;
@@ -19,8 +18,6 @@ interface ast_dmx_if #(
   logic [EMPTY_WIDTH   - 1 : 0] empty;
   logic [CHANNEL_WIDTH - 1 : 0] channel;
   logic                         ready;
-  
-
 
   default clocking cb
     @( posedge clk );
@@ -34,7 +31,6 @@ interface ast_dmx_if #(
     input   ready;
   endclocking
 
-
   clocking cbo
     @( posedge clk );
     input  dir;
@@ -46,5 +42,5 @@ interface ast_dmx_if #(
     input  channel;
     output ready;
   endclocking
-  
+
 endinterface

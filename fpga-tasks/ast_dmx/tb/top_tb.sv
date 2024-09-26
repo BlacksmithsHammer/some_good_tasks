@@ -63,6 +63,45 @@ module top_tb #(
       end
   endgenerate
 
+  /////////////////////////////////////////////////////////
+  // ASSERTIONS BLOCK
+  /////////////////////////////////////////////////////////
+  property check_unknown( valid, 
+                          data, 
+                          startofpacket, 
+                          endofpacket, 
+                          channel,
+                          empty);
+    @( posedge clk ) disable iff ( srst ) 
+      ( valid === 1 ) |->
+        !$isunknown(data) &&
+        !$isunknown(startofpacket) &&
+        !$isunknown(endofpacket) &&
+        !$isunknown(channel) &&
+        !$isunknown(empty);
+  endproperty
+
+  // property check_sof_eop ( startofpacket, endofpacket )
+  // endproperty
+  
+  genvar j;
+  generate
+    for (j = 0; j < TX_DIR; j++)
+      assert property (check_unknown (_source_if[j].valid,
+                                      _source_if[j].data,
+                                      _source_if[j].startofpacket,
+                                      _source_if[j].endofpacket,
+                                      _source_if[j].channel,
+                                      _source_if[j].empty) )
+          $display("ALL GOOD", $time);
+        else
+          $display("GOT X IN SIGNAL AT TIME:", $time());
+  endgenerate
+
+  /////////////////////////////////////////////////////////
+  // DUT AND INITIAL
+  /////////////////////////////////////////////////////////
+
   ast_dmx #(
     .DATA_WIDTH    ( DATA_WIDTH    ),
     .CHANNEL_WIDTH ( CHANNEL_WIDTH ),
@@ -95,7 +134,7 @@ module top_tb #(
 
   task reset();
     srst <= 1'b1;
-    ##1;
+    @( _sink_if.cb );
     srst <= 1'b0;
   endtask
 
@@ -105,7 +144,6 @@ module top_tb #(
       env = new();
       env.build( _sink_if, _source_if );
       reset();
-
       case (TEST_CASE)
         ONE_BYTE:
           begin
@@ -147,14 +185,4 @@ module top_tb #(
       $stop();
     end
 
-
-    
-
-// event clk_pos_event;
-// initial
-//   begin
-//     forever
-//     @( posedge clk )
-//     ->clk_pos_event;
-//   end
 endmodule

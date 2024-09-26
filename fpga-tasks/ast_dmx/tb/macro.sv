@@ -11,6 +11,14 @@
       $display("EXPECTED %8d, got %8d", expected, got); \
       $display("------------------------------------------------------------------"); \
       // $stop(); \
+    end
+
+`define SHOW_PROBLEM(problem_name, description) \
+    begin \
+      $display(problem_name, "  AT TIME: %8d", $time); \
+      $display(description); \
+      $display("------------------------------------------------------------------"); \
+      // $stop(); \
     end 
 
 `define THROW_CRITICAL_ERROR(problem_name) \
