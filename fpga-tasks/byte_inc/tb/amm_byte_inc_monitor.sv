@@ -5,50 +5,63 @@ class amm_byte_inc_monitor #(
   parameter int ADDR_WIDTH = 10,
   parameter int BYTE_CNT   = DATA_WIDTH/8
 );
-  local int end_of_run = 0;
-  local mailbox #( T )     mon2scb;
+  local mailbox #( T ) drv2mon;
+  local mailbox #( T ) mon2scb;
+
+  local virtual byte_inc_set_if #(
+    .DATA_WIDTH ( DATA_WIDTH ),
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .BYTE_CNT   ( BYTE_CNT   )
+  ) settings_if;
 
   local virtual amm_if #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) reader;
+  ) reader_if;
 
   local virtual amm_if #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) writer;
+  ) writer_if;
 
   function new(    
-    virtual amm_if #(
+    virtual byte_inc_set_if #(
       .DATA_WIDTH ( DATA_WIDTH ),
       .ADDR_WIDTH ( ADDR_WIDTH ),
       .BYTE_CNT   ( BYTE_CNT   )
-    ) reader,
+    ) settings_if,
 
     virtual amm_if #(
       .DATA_WIDTH ( DATA_WIDTH ),
       .ADDR_WIDTH ( ADDR_WIDTH ),
       .BYTE_CNT   ( BYTE_CNT   )
-    ) writer,
-      
+    ) reader_if,
+
+    virtual amm_if #(
+      .DATA_WIDTH ( DATA_WIDTH ),
+      .ADDR_WIDTH ( ADDR_WIDTH ),
+      .BYTE_CNT   ( BYTE_CNT   )
+    ) writer_if,
+
+    mailbox #( T ) drv2mon,  
     mailbox #( T ) mon2scb);
 
-    this.reader = reader;
-    this.writer = writer;
+    this.settings_if = settings_if;
+    this.reader_if   = reader_if;
+    this.writer_if   = writer_if;
 
-    this.mon2scb = mon2scb;
+    this.drv2mon     = drv2mon;
+    this.mon2scb     = mon2scb;
   endfunction
-
-  function int get_num_packets();
-    return mon2scb.num();
-  endfunction
-
 
   task run();
-    
-    wait(end_of_run);
+    while( 1 )
+      begin
+        
+        @( this.settings_if.cb );
+      end
   endtask
 
 endclass 

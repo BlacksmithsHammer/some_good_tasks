@@ -3,9 +3,10 @@ interface byte_inc_set_if #(
   parameter int ADDR_WIDTH = 10,
   parameter int BYTE_CNT   = DATA_WIDTH/8
 ) (
-  input clk,
-  input srst
+  input clk
 );
+  logic                  srst;
+
   logic [ADDR_WIDTH-1:0] base_addr;
   logic [ADDR_WIDTH-1:0] length;
   logic                  run;

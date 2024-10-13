@@ -9,7 +9,6 @@ module top_tb #(
 );
 
   bit clk;
-  bit srst;
 
   initial
     forever
@@ -22,27 +21,24 @@ module top_tb #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) settings (
-    .clk        ( clk        ),
-    .srst       ( srst       )
+  ) settings_if (
+    .clk        ( clk        )
   );
 
   amm_if #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) reader (
-    .clk        ( clk        ),
-    .srst       ( srst       )
+  ) reader_if (
+    .clk        ( clk        )
   );
 
   amm_if #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) writer (
-    .clk        ( clk        ),
-    .srst       ( srst       )
+  ) writer_if (
+    .clk        ( clk        )
   );
 
   byte_inc #(
@@ -50,42 +46,36 @@ module top_tb #(
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
   ) dut (
-    .clk_i                   ( clk  ),
-    .srst_i                  ( srst ),
+    .clk_i                   ( clk                     ),
+    .srst_i                  ( settings_if.srst        ),
     // settings
-    .base_addr_i             ( settings.base_addr   ),
-    .length_i                ( settings.length      ),
-    .run_i                   ( settings.run         ),
-    .waitrequest_o           ( settings.waitrequest ),
+    .base_addr_i             ( settings_if.base_addr   ),
+    .length_i                ( settings_if.length      ),
+    .run_i                   ( settings_if.run         ),
+    .waitrequest_o           ( settings_if.waitrequest ),
 
     // reader
-    .amm_rd_address_o        ( reader.address       ),
-    .amm_rd_read_o           ( reader.read          ),
-    .amm_rd_readdata_i       ( reader.data          ),
-    .amm_rd_readdatavalid_i  ( reader.datavalid ),
-    .amm_rd_waitrequest_i    ( reader.waitrequest   ),
+    .amm_rd_address_o        ( reader_if.address       ),
+    .amm_rd_read_o           ( reader_if.read          ),
+    .amm_rd_readdata_i       ( reader_if.data          ),
+    .amm_rd_readdatavalid_i  ( reader_if.datavalid ),
+    .amm_rd_waitrequest_i    ( reader_if.waitrequest   ),
 
     // writer
-    .amm_wr_address_o        ( writer.address       ),
-    .amm_wr_write_o          ( writer.write         ),
-    .amm_wr_writedata_o      ( writer.data          ),
-    .amm_wr_byteenable_o     ( writer.byteenable    ),
-    .amm_wr_waitrequest_i    ( writer.waitrequest   )
+    .amm_wr_address_o        ( writer_if.address       ),
+    .amm_wr_write_o          ( writer_if.write         ),
+    .amm_wr_writedata_o      ( writer_if.data          ),
+    .amm_wr_byteenable_o     ( writer_if.byteenable    ),
+    .amm_wr_waitrequest_i    ( writer_if.waitrequest   )
   );
 
 
-  task reset();
-    srst <= 1'b1;
-    @( settings.cb );
-    srst <= 1'b0;
-  endtask
 
   initial
     begin
-      amm_byte_inc_enviroment #( byte_inc_transaction ) env;
+      amm_byte_inc_enviroment #( amm_byte_inc_transaction ) env;
       env = new();
-      env.build(reader, writer);
-      reset();
+      env.build(settings_if, reader_if, writer_if);
       
       case (TEST_CASE)
         MVP:

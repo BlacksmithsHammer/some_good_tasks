@@ -3,8 +3,7 @@ interface amm_if #(
   parameter int ADDR_WIDTH = 10,
   parameter int BYTE_CNT   = DATA_WIDTH/8
 ) (
-  input clk,
-  input srst
+  input clk
 );
   logic                  waitrequest;
   logic [ADDR_WIDTH-1:0] address;

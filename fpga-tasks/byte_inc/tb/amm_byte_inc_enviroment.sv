@@ -7,50 +7,64 @@ class amm_byte_inc_enviroment #(
 );
 
   local amm_byte_inc_generator  #( T ) gen;
-  // local amm_byte_inc_driver     #( T ) drv;
-  // local amm_byte_inc_monitor    #( T ) mon;
+  local amm_byte_inc_driver     #( T ) drv;
+  local amm_byte_inc_monitor    #( T ) mon;
   // local amm_byte_inc_scoreboard #( T ) scb;
   
   mailbox #( T ) gen2drv;
-  // mailbox #( T ) drv2scb;
-  // mailbox #( T ) mon2scb;
+  mailbox #( T ) drv2scb;
+  mailbox #( T ) drv2mon;
+  mailbox #( T ) mon2scb;
+
+  local virtual byte_inc_set_if #(
+    .DATA_WIDTH ( DATA_WIDTH ),
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .BYTE_CNT   ( BYTE_CNT   )
+  ) settings_if;
 
   local virtual amm_if #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) reader;
+  ) reader_if;
 
   local virtual amm_if #(
     .DATA_WIDTH ( DATA_WIDTH ),
     .ADDR_WIDTH ( ADDR_WIDTH ),
     .BYTE_CNT   ( BYTE_CNT   )
-  ) writer;
+  ) writer_if;
 
   task build(
-    virtual amm_if #(
+    virtual byte_inc_set_if #(
       .DATA_WIDTH ( DATA_WIDTH ),
       .ADDR_WIDTH ( ADDR_WIDTH ),
       .BYTE_CNT   ( BYTE_CNT   )
-    ) reader,
+    ) settings_if,
 
     virtual amm_if #(
       .DATA_WIDTH ( DATA_WIDTH ),
       .ADDR_WIDTH ( ADDR_WIDTH ),
       .BYTE_CNT   ( BYTE_CNT   )
-    ) writer
+    ) reader_if,
+
+    virtual amm_if #(
+      .DATA_WIDTH ( DATA_WIDTH ),
+      .ADDR_WIDTH ( ADDR_WIDTH ),
+      .BYTE_CNT   ( BYTE_CNT   )
+    ) writer_if
   );
 
-    this.reader = reader;
-    this.writer = writer;
+    this.settings_if = settings_if;
+    this.reader_if   = reader_if;
+    this.writer_if   = writer_if;
 
-    this.gen2drv = new(); // CHANGE IN FUTURE TO (1)!!!!!!!!!!!
-    // this.drv2scb = new();
-    // this.mon2scb = new();
+    this.gen2drv = new(1); // CHANGE IN FUTURE TO (1)!!!!!!!!!!!
+    this.drv2scb = new();
+    this.mon2scb = new();
 
-    gen = new(                          this.gen2drv                             );
-    // drv = new( reader, writer,    this.gen2drv, this.drv2scb               );
-    // mon = new( _sink_if, _source_if,                                this.mon2scb );
+    gen = new(                                                  this.gen2drv                                           );
+    drv = new(this.settings_if, this.reader_if, this.writer_if, this.gen2drv, this.drv2mon, this.drv2scb              );
+    mon = new(this.settings_if, this.reader_if, this.writer_if,               this.drv2mon,               this.mon2scb );
     // scb = new(                                        this.drv2scb, this.mon2scb );
   endtask
 
@@ -60,8 +74,8 @@ class amm_byte_inc_enviroment #(
     
     fork
       gen.generate_test(_test);
-      // drv.run();
-      // mon.run();
+      drv.run();
+      mon.run();
       // scb.run();
     join_any
 

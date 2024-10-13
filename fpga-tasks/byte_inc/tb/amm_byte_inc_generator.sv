@@ -21,11 +21,14 @@ class amm_byte_inc_generator #(
   task gen_by_pattern(gen_data_pattern _pattern,
                       int              base_addr,
                       int              length_add,
-                      int              min_pause,
-                      int              max_pause,
+                      int              chance_of_read,
+                      int              chance_of_write,
+                      int              latency_of_read,
                       int              start_data_num);
     T tr;
-    tr = new(base_addr, length_add, min_pause, max_pause);
+    tr = new( base_addr, length_add, 
+              chance_of_read, chance_of_write,
+              latency_of_read);
 
     case( _pattern )
       GEN_PATTERN_SAME:
@@ -62,10 +65,17 @@ class amm_byte_inc_generator #(
     case( _test )
       MVP:
         begin
-          gen_by_pattern( GEN_PATTERN_SAME, 
-                          0, 10, 
-                          5, 10,
-                          231);
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          0, 20, 
+                          25, 50,
+                          2,
+                          255);
+
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 10, 
+                          100, 100,
+                          1,
+                          255);
         end
 
       default:
@@ -75,7 +85,7 @@ class amm_byte_inc_generator #(
 
     endcase
     // fix for work in fork-thread
-    #10_000_000;
+    #1_000_000;
 
   endtask
 
