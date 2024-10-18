@@ -65,9 +65,15 @@ class amm_byte_inc_generator #(
     case( _test )
       MVP:
         begin
+
+                    // gen_by_pattern( GEN_PATTERN_RANDOM, 
+                    //       10, 10, 
+                    //       100, 100,
+                    //       1,
+                    //       255);
           gen_by_pattern( GEN_PATTERN_RANDOM, 
-                          0, 20, 
-                          25, 50,
+                          10, 40, 
+                          10, 10,
                           2,
                           255);
 
@@ -75,6 +81,17 @@ class amm_byte_inc_generator #(
                           10, 10, 
                           100, 100,
                           1,
+                          255);
+
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 400, 
+                          100, 100,
+                          2,
+                          255);
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 40, 
+                          100, 100,
+                          2,
                           255);
         end
 
@@ -85,7 +102,7 @@ class amm_byte_inc_generator #(
 
     endcase
     // fix for work in fork-thread
-    #1_000_000;
+    #100_000;
 
   endtask
 

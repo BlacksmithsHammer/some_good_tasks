@@ -9,6 +9,7 @@ class amm_byte_inc_transaction #(
   local int         chance_of_read;
   local int         chance_of_write;
   local int         latency_of_read;
+  local int         have_problem;
 
   function new( int base_addr,
                 int length_add,
@@ -20,6 +21,25 @@ class amm_byte_inc_transaction #(
     this.chance_of_read  = chance_of_read;
     this.chance_of_write = chance_of_write;
     this.latency_of_read = latency_of_read;
+    this.have_problem    = 0;
+  endfunction
+
+  function amm_byte_inc_transaction #(
+    .DATA_WIDTH ( DATA_WIDTH ),
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .BYTE_CNT   ( BYTE_CNT   )
+  ) copy();
+    amm_byte_inc_transaction cpy_tr;
+    cpy_tr = new( this.get_base_addr(),
+                  this.get_length_add(),
+                  this.get_chance_of_read(),
+                  this.get_chance_of_write(),
+                  this.get_latency_of_read());
+    
+    for( int i = 0; i < 2**ADDR_WIDTH * BYTE_CNT; i++)
+      cpy_tr.set_byte(i, this.get_byte(i));
+
+    return cpy_tr;
   endfunction
 
   function logic [7:0] get_byte(int byte_addr);
@@ -37,6 +57,14 @@ class amm_byte_inc_transaction #(
     this.data[byte_addr] = byte_data;
   endfunction
 
+  function void set_problem(int problem_id);
+    this.have_problem = problem_id;
+  endfunction
+
+  function int get_problem();
+    return this.have_problem;
+  endfunction
+
   function int get_base_addr();
     return this.base_addr;
   endfunction
@@ -49,12 +77,12 @@ class amm_byte_inc_transaction #(
     return this.chance_of_read;
   endfunction
 
-  function int get_latency_of_read();
-    return this.latency_of_read;
-  endfunction
-
   function int get_chance_of_write();
     return this.chance_of_write;
+  endfunction
+
+  function int get_latency_of_read();
+    return this.latency_of_read;
   endfunction
 
 endclass 
