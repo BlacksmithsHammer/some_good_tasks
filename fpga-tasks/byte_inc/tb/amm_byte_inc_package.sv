@@ -1,7 +1,12 @@
 package amm_byte_inc_package;
 
   typedef enum {
-    MVP = 0
+    MVP                = 0,
+    RANDOM_WAITREQUEST = 1,
+    STATIC_WAITREQUEST = 2,
+    OVERSIZE_LENGTH    = 3,
+    MAX_LATENCY        = 4,
+    BIG_TEST           = 5
   } test_case;
 
   `include "macro.sv"

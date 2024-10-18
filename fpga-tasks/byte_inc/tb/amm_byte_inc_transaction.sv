@@ -51,10 +51,10 @@ class amm_byte_inc_transaction #(
 
   function void set_byte(int         byte_addr,
                          logic [7:0] byte_data);
-    if( byte_addr >= 2**ADDR_WIDTH * BYTE_CNT) 
-      `THROW_CRITICAL_ERROR("TRANSACTION: set_byte - ADDRESS OF BYTE IN MEMORY TOO BIG");
-    
-    this.data[byte_addr] = byte_data;
+    // if( byte_addr >= 2**ADDR_WIDTH * BYTE_CNT) 
+    //   `THROW_CRITICAL_ERROR("TRANSACTION: set_byte - ADDRESS OF BYTE IN MEMORY TOO BIG");
+    if( byte_addr < 2**ADDR_WIDTH * BYTE_CNT) 
+      this.data[byte_addr] = byte_data;
   endfunction
 
   function void set_problem(int problem_id);

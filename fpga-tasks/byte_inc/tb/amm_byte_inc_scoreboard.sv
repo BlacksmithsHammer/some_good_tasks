@@ -5,6 +5,9 @@ class amm_byte_inc_scoreboard #(
   parameter int ADDR_WIDTH = 10,
   parameter int BYTE_CNT   = DATA_WIDTH/8
 );
+  local int total_tests  = 0;
+  local int failed_tests = 0;
+
   local mailbox #( T ) drv2scb;
   local mailbox #( T ) mon2scb;
 
@@ -16,6 +19,19 @@ class amm_byte_inc_scoreboard #(
 
     this.drv2scb = drv2scb;
     this.mon2scb = mon2scb;
+  endfunction
+
+  function void check_results();
+    $display("====================================================");
+    $display("Total tests sended: %0d", this.total_tests );
+    $display("Failed tests: %0d",       this.failed_tests);
+    $display("----------------------------------------------------");
+    if( failed_tests > 0 )
+      $display("Problems with tests");
+    else
+      $display("All tests passed");
+    $display("====================================================");
+    
   endfunction
 
   task reset();
@@ -31,16 +47,17 @@ class amm_byte_inc_scoreboard #(
       begin
         drv2scb.get(tr_drv);
         mon2scb.get(tr_mon);
-        
+        this.total_tests++;
+
         // check problems with control signals
         if( tr_drv.get_problem() != 0 )
           begin
             if( tr_drv.get_problem() == 1 )
               `SHOW_PROBLEM("Time-out", "Driver waiting waitrequest == 0 for a very long time");
-
+              this.failed_tests++;
             continue;
           end
-          
+
         // range of increment [left_ind...right_ind) (last index is not included)
         left_ind  = tr_drv.get_base_addr() * 8;
         right_ind = left_ind + tr_drv.get_length_add();
@@ -53,7 +70,8 @@ class amm_byte_inc_scoreboard #(
             begin
               `SHOW_WRONG_SIGNALS($sformatf("%0h", tr_drv.get_byte(i)), 
                                   $sformatf("%0h", tr_mon.get_byte(i)), 
-                                  $sformatf("Problem with byte %0d", i));
+                                  $sformatf("Problem with word in address %0d", i / 8));
+              this.failed_tests++;
               break;
             end
       end

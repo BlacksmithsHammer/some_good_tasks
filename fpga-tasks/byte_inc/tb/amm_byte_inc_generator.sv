@@ -24,7 +24,7 @@ class amm_byte_inc_generator #(
                       int              chance_of_read,
                       int              chance_of_write,
                       int              latency_of_read,
-                      int              start_data_num);
+                      int              start_data_num = 0);
     T tr;
     tr = new( base_addr, length_add, 
               chance_of_read, chance_of_write,
@@ -65,12 +65,6 @@ class amm_byte_inc_generator #(
     case( _test )
       MVP:
         begin
-
-                    // gen_by_pattern( GEN_PATTERN_RANDOM, 
-                    //       10, 10, 
-                    //       100, 100,
-                    //       1,
-                    //       255);
           gen_by_pattern( GEN_PATTERN_RANDOM, 
                           10, 40, 
                           10, 10,
@@ -93,6 +87,200 @@ class amm_byte_inc_generator #(
                           100, 100,
                           2,
                           255);
+          // base addr + length > size of data array
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          1000, 200, 
+                          100, 100,
+                          5,
+                          255);
+        end
+      
+      RANDOM_WAITREQUEST:
+        begin
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_RANDOM, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            25, 25,
+                            $urandom_range(32, 1),
+                            255);
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_SAME, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            25, 25,
+                            $urandom_range(32, 1),
+                            255);
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_PLAIN, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            25, 25,
+                            $urandom_range(32, 1),
+                            255);
+        end
+
+      STATIC_WAITREQUEST:
+        begin
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_RANDOM, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            100, 100,
+                            $urandom_range(32, 1),
+                            255);
+
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_SAME, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            100, 100,
+                            $urandom_range(32, 1),
+                            255);
+
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_PLAIN, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            100, 100,
+                            $urandom_range(32, 1),
+                            255);
+        end
+      
+      OVERSIZE_LENGTH:
+        begin
+          for( int i = 0; i < 100; i++ )
+            for( int j = 0; j < 10; j++ )
+              gen_by_pattern( GEN_PATTERN_RANDOM, 
+                              i*10, j*100, 
+                              50, 50,
+                              $urandom_range(32, 1),
+                              255);
+
+          for( int i = 0; i < 100; i++ )
+            for( int j = 0; j < 10; j++ )
+              gen_by_pattern( GEN_PATTERN_SAME, 
+                              i*10, j*100, 
+                              50, 50,
+                              $urandom_range(32, 1),
+                              255);
+          
+          for( int i = 0; i < 100; i++ )
+            for( int j = 0; j < 10; j++ )
+              gen_by_pattern( GEN_PATTERN_PLAIN, 
+                              i*10, j*100, 
+                              50, 50,
+                              $urandom_range(32, 1),
+                              255);
+        end
+      
+      MAX_LATENCY:
+        begin
+          for( int _latency = 1; _latency < 33; _latency++ )
+            for( int i = 0; i < 100; i++ )
+              gen_by_pattern( GEN_PATTERN_RANDOM, 
+                              $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                              25, 25,
+                              _latency,
+                              255);
+        end
+      
+      BIG_TEST:
+        begin
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 40, 
+                          10, 10,
+                          2,
+                          255);
+
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 10, 
+                          100, 100,
+                          1,
+                          255);
+
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 400, 
+                          100, 100,
+                          2,
+                          255);
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          10, 40, 
+                          100, 100,
+                          2,
+                          255);
+          // base addr + length > size of data array
+          gen_by_pattern( GEN_PATTERN_RANDOM, 
+                          1000, 200, 
+                          100, 100,
+                          5,
+                          255);
+        /////////////////////////////////////////////////////////////
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_RANDOM, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            25, 25,
+                            $urandom_range(32, 1),
+                            255);
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_SAME, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            25, 25,
+                            $urandom_range(32, 1),
+                            255);
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_PLAIN, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            25, 25,
+                            $urandom_range(32, 1),
+                            255);
+        /////////////////////////////////////////////////////////////
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_RANDOM, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            100, 100,
+                            $urandom_range(32, 1),
+                            255);
+
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_SAME, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            100, 100,
+                            $urandom_range(32, 1),
+                            255);
+
+          for( int i = 0; i < 1000; i++ )
+            gen_by_pattern( GEN_PATTERN_PLAIN, 
+                            $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                            100, 100,
+                            $urandom_range(32, 1),
+                            255);
+        /////////////////////////////////////////////////////////////
+          for( int i = 0; i < 100; i++ )
+            for( int j = 0; j < 10; j++ )
+              gen_by_pattern( GEN_PATTERN_RANDOM, 
+                              i*10, j*100, 
+                              50, 50,
+                              $urandom_range(32, 1),
+                              255);
+
+          for( int i = 0; i < 100; i++ )
+            for( int j = 0; j < 10; j++ )
+              gen_by_pattern( GEN_PATTERN_SAME, 
+                              i*10, j*100, 
+                              50, 50,
+                              $urandom_range(32, 1),
+                              255);
+          
+          for( int i = 0; i < 100; i++ )
+            for( int j = 0; j < 10; j++ )
+              gen_by_pattern( GEN_PATTERN_PLAIN, 
+                              i*10, j*100, 
+                              50, 50,
+                              $urandom_range(32, 1),
+                              255);
+        /////////////////////////////////////////////////////////////
+          for( int _latency = 1; _latency < 33; _latency++ )
+            for( int i = 0; i < 100; i++ )
+              gen_by_pattern( GEN_PATTERN_RANDOM, 
+                              $urandom_range(1023, 0), $urandom_range(1023, 0), 
+                              25, 25,
+                              _latency,
+                              255);
         end
 
       default:
@@ -102,7 +290,7 @@ class amm_byte_inc_generator #(
 
     endcase
     // fix for work in fork-thread
-    #100_000;
+    #1_000_000;
 
   endtask
 

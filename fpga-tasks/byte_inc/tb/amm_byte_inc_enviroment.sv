@@ -84,7 +84,7 @@ class amm_byte_inc_enviroment #(
     #1000;
     disable fork;
     #100;
-    // scb.check_remaining_packets();
+    scb.check_results();
     // scb.reset();
 
   endtask

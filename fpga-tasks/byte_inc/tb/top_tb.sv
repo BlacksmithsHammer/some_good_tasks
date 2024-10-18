@@ -1,7 +1,7 @@
 import amm_byte_inc_package::*;
 
 module top_tb #(
-  parameter test_case TEST_CASE = MVP,
+  parameter test_case TEST_CASE = RANDOM_WAITREQUEST,
   
   parameter int DATA_WIDTH = 64,
   parameter int ADDR_WIDTH = 10,
@@ -81,6 +81,31 @@ module top_tb #(
         MVP:
           begin
             env.run(MVP, "CHECK MVP");
+          end
+
+        RANDOM_WAITREQUEST:
+          begin
+            env.run(RANDOM_WAITREQUEST, "CHECK RANDOM_WAITREQUEST");
+          end
+
+        STATIC_WAITREQUEST:
+          begin
+            env.run(STATIC_WAITREQUEST, "CHECK STATIC_WAITREQUEST");
+          end
+
+        OVERSIZE_LENGTH:
+          begin
+            env.run(OVERSIZE_LENGTH, "CHECK OVERSIZE_LENGTH");
+          end
+
+        MAX_LATENCY:
+          begin
+            env.run(MAX_LATENCY, "CHECK MAX_LATENCY");
+          end
+
+        BIG_TEST:
+          begin
+            env.run(BIG_TEST, "CHECK BIG_TEST");
           end
 
         default:
