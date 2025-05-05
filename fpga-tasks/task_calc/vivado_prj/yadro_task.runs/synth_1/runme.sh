@@ -25,7 +25,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/taifun/Desktop/yadro_impulse/vivado_prj/yadro_task.runs/synth_1'
+HD_PWD='C:/Users/taifun/Desktop/task_calc/vivado_prj/yadro_task.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

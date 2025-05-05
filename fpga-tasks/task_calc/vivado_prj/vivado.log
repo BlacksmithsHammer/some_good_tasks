@@ -1,0 +1,509 @@
+#-----------------------------------------------------------
+# Vivado v2024.2.2 (64-bit)
+# SW Build 6060944 on Thu Mar 06 19:10:01 MST 2025
+# IP Build 6050500 on Thu Mar  6 23:33:39 MST 2025
+# SharedData Build 6060542 on Thu Mar 06 10:31:07 MST 2025
+# Start of session at: Tue May  6 00:46:00 2025
+# Process ID         : 16980
+# Current directory  : C:/Users/taifun/Desktop/task_calc/vivado_prj
+# Command line       : vivado.exe -gui_launcher_event rodinguilauncherevent1452 C:\Users\taifun\Desktop\task_calc\vivado_prj\yadro_task.xpr
+# Log file           : C:/Users/taifun/Desktop/task_calc/vivado_prj/vivado.log
+# Journal file       : C:/Users/taifun/Desktop/task_calc/vivado_prj\vivado.jou
+# Running On         : KOMPUTER
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 22621
+# Processor Detail   : 13th Gen Intel(R) Core(TM) i5-13400F
+# CPU Frequency      : 2496 MHz
+# CPU Physical cores : 10
+# CPU Logical cores  : 16
+# Host memory        : 34187 MB
+# Swap memory        : 5100 MB
+# Total Virtual      : 39288 MB
+# Available Virtual  : 22892 MB
+#-----------------------------------------------------------
+start_gui
+open_project C:/Users/taifun/Desktop/task_calc/vivado_prj/yadro_task.xpr
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu208ld:part0:2.0 available at V:/Vivado/Vivado/2024.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu208ld/production/2.0/board.xml as part xczu58dr-fsvg1517-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu216ld:part0:2.0 available at V:/Vivado/Vivado/2024.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu216ld/production/2.0/board.xml as part xczu59dr-ffvf1760-2-i specified in board_part file is either invalid or not available
+WARNING: [Board 49-26] cannot add Board Part xilinx.com:zcu670ld:part0:1.0 available at V:/Vivado/Vivado/2024.2/data/xhub/boards/XilinxBoardStore/boards/Xilinx/zcu670ld/1.0/board.xml as part xczu57dr-fsve1156-2-i specified in board_part file is either invalid or not available
+INFO: [Project 1-313] Project file moved from 'C:/Users/taifun/Desktop/yadro_impulse/vivado_prj' since last save.
+INFO: [filemgmt 56-3] Default IP Output Path : Could not find the directory 'C:/Users/taifun/Desktop/task_calc/vivado_prj/yadro_task.gen/sources_1'.
+Scanning sources...
+Finished scanning sources
+CRITICAL WARNING: [Runs 36-271] Incremental checkpoint part, xczu3eg-sbva484-2L-e, does not match run part, xczu3eg-sfvc784-2-i.
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'V:/Vivado/Vivado/2024.2/data/ip'.
+open_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:09 . Memory (MB): peak = 1632.547 ; gain = 394.391
+update_compile_order -fileset sources_1
+open_run impl_1
+INFO: [Device 21-403] Loading part xczu3eg-sfvc784-2-i
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 2590.738 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 161 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2024.2.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Read ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 2590.738 ; gain = 0.000
+INFO: [Timing 38-478] Restoring timing data from binary archive.
+INFO: [Timing 38-479] Binary timing data restore complete.
+INFO: [Project 1-856] Restoring constraints from binary archive.
+INFO: [Project 1-853] Binary constraint restore complete.
+INFO: [Designutils 20-5722] Start Reading Physical Databases.
+Reading placement.
+Read Netlist Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Reading placer database...
+Read Device Cache: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.038 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Read PlaceDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.047 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Read PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Reading routing.
+Read RouteStorage: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.019 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Read Physdb Files: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.116 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Restored from archive | CPU: 0.000000 secs | Memory: 0.000000 MB |
+Finished XDEF File Restore: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.118 . Memory (MB): peak = 2721.211 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3191.113 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 135 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 4 instances
+  IBUF => IBUF (IBUFCTRL, INBUF): 131 instances
+
+open_run: Time (s): cpu = 00:00:12 ; elapsed = 00:00:22 . Memory (MB): peak = 3762.117 ; gain = 2099.676
+report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -max_paths 1000 -nworst 100 -input_pins -routable_nets -name timing_1
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -max_paths 100000 -nworst 100 -input_pins -routable_nets -name timing_2
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+report_timing_summary: Time (s): cpu = 00:00:10 ; elapsed = 00:00:22 . Memory (MB): peak = 4228.285 ; gain = 368.656
+report_utilization -name utilization_1
+close_design
+reset_run synth_1
+INFO: [Project 1-1161] Replacing file C:/Users/taifun/Desktop/task_calc/vivado_prj/yadro_task.srcs/utils_1/imports/synth_1/calc.dcp with file C:/Users/taifun/Desktop/task_calc/vivado_prj/yadro_task.runs/synth_1/calc.dcp
+launch_runs synth_1 -jobs 4
+[Tue May  6 01:20:49 2025] Launched synth_1...
+Run output will be captured here: C:/Users/taifun/Desktop/task_calc/vivado_prj/yadro_task.runs/synth_1/runme.log
+open_run synth_1 -name synth_1
+Design is defaulting to impl run constrset: constrs_1
+Design is defaulting to synth run part: xczu3eg-sfvc784-2-i
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 4279.688 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 161 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2024.2.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc]
+INFO: [Timing 38-35] Done setting XDC timing constraints. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[0]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[10]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[11]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[12]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[13]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[14]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[15]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[16]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[17]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[18]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[19]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[1]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[20]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[21]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[22]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[23]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[24]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[25]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[26]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[27]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[28]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[29]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[2]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[30]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[31]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[3]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[4]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[5]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[6]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[7]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[8]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'a_i_IBUF[9]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[0]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[10]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[11]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[12]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[13]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[14]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[15]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[16]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[17]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[18]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[19]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[1]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[20]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[21]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[22]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[23]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[24]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[25]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[26]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[27]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[28]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[29]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[2]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[30]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[31]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[3]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[4]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[5]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[6]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[7]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[8]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'b_i_IBUF[9]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[0]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[10]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[11]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[12]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[13]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[14]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[15]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[16]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[17]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[18]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[19]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[1]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[20]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[21]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[22]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[23]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[24]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[25]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[26]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[27]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[28]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[29]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[2]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[30]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[31]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[3]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[4]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[5]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[6]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[7]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[8]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'c_i_IBUF[9]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'clk_IBUF_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'd_i_IBUF[0]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'd_i_IBUF[10]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-401] set_false_path: 'd_i_IBUF[11]_inst/INBUF_INST' is not a valid endpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+Resolution: A valid end point is a data pin of a sequential cell or a primary output or inout port. Please validate that all the objects returned by your query belong to this list.
+INFO: [Common 17-14] Message 'Constraints 18-401' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:7]
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[0]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[10]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[11]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[12]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[13]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[14]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[15]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[16]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[17]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[18]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[19]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[1]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[20]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[21]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[22]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[23]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[24]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[25]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[26]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[27]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[28]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[29]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[2]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[30]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[31]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[3]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[4]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[5]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[6]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[7]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[8]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'a_i_IBUF[9]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[0]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[10]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[11]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[12]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[13]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[14]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[15]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[16]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[17]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[18]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[19]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[1]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[20]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[21]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[22]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[23]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[24]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[25]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[26]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[27]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[28]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[29]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[2]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[30]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[31]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[3]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[4]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[5]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[6]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[7]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[8]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'b_i_IBUF[9]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[0]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[10]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[11]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[12]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[13]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[14]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[15]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[16]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[17]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[18]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[19]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[1]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[20]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[21]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[22]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[23]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[24]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[25]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[26]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[27]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[28]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[29]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[2]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[30]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[31]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[3]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[4]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[5]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[6]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[7]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[8]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'c_i_IBUF[9]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'clk_IBUF_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'd_i_IBUF[0]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'd_i_IBUF[10]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+WARNING: [Constraints 18-402] set_false_path: 'd_i_IBUF[11]_inst/INBUF_INST' is not a valid startpoint. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Resolution: A valid start point is a main or generated clock pin or port, a clock pin of a sequential cell, or a primary input or inout port. Please validate that all the objects returned by your query belong to this list.
+INFO: [Common 17-14] Message 'Constraints 18-402' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings. [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc:8]
+Finished Parsing XDC File [C:/Users/taifun/Desktop/task_calc/vivado_prj/constraints.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4279.688 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 135 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 4 instances
+  IBUF => IBUF (IBUFCTRL, INBUF): 131 instances
+
+open_run: Time (s): cpu = 00:00:07 ; elapsed = 00:00:15 . Memory (MB): peak = 4279.688 ; gain = 0.000
+report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -max_paths 100000 -nworst 1000 -input_pins -routable_nets -name timing_1
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: I, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+report_timing_summary: Time (s): cpu = 00:00:16 ; elapsed = 00:00:28 . Memory (MB): peak = 5526.980 ; gain = 307.344

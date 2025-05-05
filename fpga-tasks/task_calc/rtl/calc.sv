@@ -49,7 +49,7 @@ module calc #(
     // pipe 1
     logic signed [max2(A_DWIDTH, B_DWIDTH):0] sub_ab; // a - b
     logic signed [C_DWIDTH + 2:0            ] mult_c; // 1 + 3c
-    logic signed [D_DWIDTH + 1:0            ] mult_d; // 3d
+    logic signed [D_DWIDTH + 1:0            ] mult_d; // 4d
 
     always_ff @( posedge clk ) begin
         sub_ab <= a - b;
